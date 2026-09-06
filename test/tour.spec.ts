@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const DEMO = '/demo/index.html';
+const DEMO = '/';
 
 async function startTour(page: Page, selector = '#start-tour') {
   await page.goto(DEMO);

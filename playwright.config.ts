@@ -12,10 +12,12 @@ export default defineConfig({
       ? { executablePath: process.env.CHROMIUM_PATH }
       : {},
   },
+  // Tests run against the built demo site, so they exercise the same bundle
+  // that gets deployed rather than loose files served off disk.
   webServer: {
-    command: 'python3 -m http.server 4173 --bind 127.0.0.1',
-    url: 'http://127.0.0.1:4173/demo/index.html',
-    reuseExistingServer: true,
-    timeout: 30_000,
+    command: 'npm run build:demo && npm run preview --workspace=demo',
+    url: 'http://127.0.0.1:4173/',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
   },
 });

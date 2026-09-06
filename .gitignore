@@ -4,3 +4,8 @@ test-results/
 playwright-report/
 artifact/bundle.js
 artifact/guidepost-demo.html
+
+# build output
+sites/*/dist/
+sites/docs/.astro/
+.vercel/

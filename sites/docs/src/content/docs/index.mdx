@@ -1,0 +1,75 @@
+---
+title: Guidepost
+description: Accessible product tours built on native browser primitives — no positioning library, no portals, no z-index war, no hand-rolled focus trap.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+Accessible product tours built on native browser primitives. No positioning
+library, no portals, no z-index war, no hand-rolled focus trap.
+
+**MIT licensed.** 9.4 kB minified + gzipped, stylesheet included. Zero runtime
+dependencies.
+
+```bash
+npm install @cmunns/guidepost
+```
+
+```js
+import { Tour } from '@cmunns/guidepost';
+
+const tour = new Tour({
+  id: 'onboarding',
+  steps: [
+    { title: 'Welcome', text: 'A quick tour.', placement: 'center' },
+    { target: '#sidebar', title: 'Navigation', text: 'Everything lives here.', placement: 'right-start' },
+    { target: '#search', title: 'Try it', text: 'Type to continue.', focus: 'target',
+      advanceOn: { event: 'input', when: (e) => e.target.value.length > 2 } },
+  ],
+});
+
+tour.start();
+```
+
+Every example in these docs runs live at [guidepost.dev](https://guidepost.dev).
+
+## What it is built on
+
+<CardGrid>
+  <Card title="Popover API" icon="rocket">
+    The card renders in the top layer. No portals, no z-index escalation, no
+    escaping `overflow: hidden`.
+  </Card>
+  <Card title="CSS anchor positioning" icon="setting">
+    The browser keeps the card tethered to its target. A measured JS fallback
+    covers browsers that do not have it yet.
+  </Card>
+  <Card title="clip-path spotlight" icon="star">
+    One element, and the hole is click-through for free — so the user can
+    complete the action the step is describing.
+  </Card>
+  <Card title="inert" icon="approve-check">
+    The focus trap is the platform's. Untabbable, unclickable, and hidden from
+    screen readers, with no keydown interception and no sentinel nodes.
+  </Card>
+</CardGrid>
+
+## Where to go next
+
+<CardGrid>
+  <Card title="Install" icon="seti:npm">
+    [Install](/install) the package and decide who owns the CSS pipeline.
+  </Card>
+  <Card title="Quick start" icon="open-book">
+    [Quick start](/quick-start) — a tour is an array of steps and a call to
+    `start()`.
+  </Card>
+  <Card title="Blocking modes" icon="puzzle">
+    [Blocking modes](/guides/blocking-modes) — three combinations, and the
+    choice matters more than any styling decision.
+  </Card>
+  <Card title="Reference" icon="list-format">
+    [Steps](/reference/steps), [Options](/reference/options) and
+    [Methods](/reference/methods) — the full surface.
+  </Card>
+</CardGrid>

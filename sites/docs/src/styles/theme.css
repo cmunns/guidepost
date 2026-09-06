@@ -1,0 +1,112 @@
+/* Guidepost docs theme.
+   Ports the palette and type stack from the original hand-authored docs page
+   onto Starlight's design tokens, so the framework inherits the existing look
+   instead of shipping its defaults. */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap');
+
+:root {
+  --sl-font: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --sl-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --gp-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+}
+
+/* Light — mirrors the original :root block. */
+:root[data-theme='light'] {
+  --gp-ground: #e9ecef;
+  --gp-surface: #ffffff;
+  --gp-surface-2: #f3f5f7;
+  --gp-line: #d8dde3;
+  --gp-ink: #12171c;
+  --gp-muted: #5c6672;
+  --gp-accent: #0f766e;
+
+  --sl-color-accent-low: #0f766e22;
+  --sl-color-accent: #0f766e;
+  --sl-color-accent-high: #0b5a54;
+  --sl-color-white: #12171c;
+  --sl-color-gray-1: #12171c;
+  --sl-color-gray-2: #3a434d;
+  --sl-color-gray-3: #5c6672;
+  --sl-color-gray-4: #8b949e;
+  --sl-color-gray-5: #d8dde3;
+  --sl-color-gray-6: #f3f5f7;
+  --sl-color-gray-7: #f8fafb;
+  --sl-color-black: #ffffff;
+  --sl-color-bg: #ffffff;
+  --sl-color-bg-nav: #f3f5f7;
+  --sl-color-bg-sidebar: #f3f5f7;
+  --sl-color-hairline: #d8dde3;
+  --sl-color-hairline-light: #e6eaee;
+  --sl-color-bg-inline-code: #f5f7f9;
+}
+
+/* Dark — mirrors the original [data-theme="dark"] block. */
+:root[data-theme='dark'] {
+  --gp-ground: #0d1114;
+  --gp-surface: #161b1f;
+  --gp-surface-2: #1d2429;
+  --gp-line: #2a3238;
+  --gp-ink: #e4e9ed;
+  --gp-muted: #8e99a4;
+  --gp-accent: #2dd4bf;
+
+  --sl-color-accent-low: #2dd4bf22;
+  --sl-color-accent: #2dd4bf;
+  --sl-color-accent-high: #5eead4;
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #e4e9ed;
+  --sl-color-gray-2: #c3ccd4;
+  --sl-color-gray-3: #8e99a4;
+  --sl-color-gray-4: #5b666f;
+  --sl-color-gray-5: #2a3238;
+  --sl-color-gray-6: #1d2429;
+  --sl-color-gray-7: #161b1f;
+  --sl-color-black: #0d1114;
+  --sl-color-bg: #0d1114;
+  --sl-color-bg-nav: #161b1f;
+  --sl-color-bg-sidebar: #161b1f;
+  --sl-color-hairline: #2a3238;
+  --sl-color-hairline-light: #232a30;
+  --sl-color-bg-inline-code: #11161a;
+}
+
+/* The original page set page titles in Newsreader; keep that voice. */
+.content-panel h1,
+.content-panel h2 {
+  font-family: var(--gp-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.site-title {
+  font-family: var(--gp-display);
+  font-weight: 500;
+}
+
+/* The wordmark is a wide PNG; cap it to header height so it does not dominate
+   the bar, and lift it in dark mode where the dark ink loses contrast. */
+.site-title img {
+  max-height: 1.75rem;
+  width: auto;
+}
+
+:root[data-theme='dark'] .site-title img {
+  filter: invert(1) hue-rotate(180deg) brightness(1.15);
+}
+
+/* Starlight's default active-link treatment puts white text on the accent;
+   against this teal that fails contrast, so use the accent as ink instead. */
+:root[data-theme='dark'] .sidebar-content a[aria-current='page'],
+:root[data-theme='dark'] .sidebar-content a[aria-current='page']:hover {
+  background-color: var(--sl-color-accent-low);
+  color: var(--sl-color-accent-high);
+  font-weight: 600;
+}
+
+:root[data-theme='light'] .sidebar-content a[aria-current='page'],
+:root[data-theme='light'] .sidebar-content a[aria-current='page']:hover {
+  background-color: var(--sl-color-accent-low);
+  color: var(--sl-color-accent-high);
+  font-weight: 600;
+}

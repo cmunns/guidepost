@@ -3,15 +3,15 @@
 Accessible product tours built on native browser primitives. No positioning
 library, no portals, no z-index war, no hand-rolled focus trap.
 
-**MIT licensed.** 9.1 KB minified + gzipped, stylesheet included. Zero runtime
+**MIT licensed.** 9.4 kB minified + gzipped, stylesheet included. Zero runtime
 dependencies.
 
 ```bash
-npm install guidepost
+npm install @cmunns/guidepost
 ```
 
 ```js
-import { Tour } from 'guidepost';
+import { Tour } from '@cmunns/guidepost';
 
 const tour = new Tour({
   id: 'onboarding',
@@ -58,7 +58,7 @@ Own bundle, minified and gzipped, with any shipped stylesheet included.
 | --- | --- | --- | --- | --- | --- | --- |
 | @reactour/tour 3.8 | 6.5 kB | 3 | MIT | – | – | – |
 | driver.js 1.8 | 7.9 kB | 0 | MIT | – | – | – |
-| **guidepost 0.1.1** | **9.4 kB** | **0** | **MIT** | **yes** | **yes** | **yes** |
+| **guidepost 0.1.4** | **9.4 kB** | **0** | **MIT** | **yes** | **yes** | **yes** |
 | shepherd.js 15.3 | 16.2 kB | 2 | AGPL-3.0 | – | – | – |
 | tourguidejs 1.1 | 17.6 kB | 0 | BSD-3 | – | – | – |
 | intro.js 8.5 | 19.3 kB | 0 | AGPL-3.0 | – | – | – |
