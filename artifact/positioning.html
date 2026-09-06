@@ -1,0 +1,615 @@
+<title>Positioning Guidepost</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+
+<style>
+  :root {
+    --ground: #e9ecef;
+    --surface: #ffffff;
+    --surface-2: #f3f5f7;
+    --line: #d8dde3;
+    --line-soft: #e6eaee;
+    --ink: #12171c;
+    --muted: #5c6672;
+    --accent: #0f766e;
+    --accent-ink: #0b5a54;
+    --accent-wash: #0f766e14;
+    --accent-text: #f6fffd;
+    --warn: #a8453b;
+    --warn-wash: #a8453b12;
+    --shadow: 0 1px 2px rgb(18 23 28 / .05), 0 12px 32px -14px rgb(18 23 28 / .22);
+
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --display: "Newsreader", Georgia, "Times New Roman", serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0d1114;
+      --surface: #161b1f;
+      --surface-2: #1d2429;
+      --line: #2a3238;
+      --line-soft: #232a30;
+      --ink: #e4e9ed;
+      --muted: #8e99a4;
+      --accent: #2dd4bf;
+      --accent-ink: #5eead4;
+      --accent-wash: #2dd4bf1a;
+      --accent-text: #08201d;
+      --warn: #e08376;
+      --warn-wash: #e0837614;
+      --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 14px 36px -14px rgb(0 0 0 / .6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0d1114;
+    --surface: #161b1f;
+    --surface-2: #1d2429;
+    --line: #2a3238;
+    --line-soft: #232a30;
+    --ink: #e4e9ed;
+    --muted: #8e99a4;
+    --accent: #2dd4bf;
+    --accent-ink: #5eead4;
+    --accent-wash: #2dd4bf1a;
+    --accent-text: #08201d;
+    --warn: #e08376;
+    --warn-wash: #e0837614;
+    --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 14px 36px -14px rgb(0 0 0 / .6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font: 400 16px/1.62 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 58rem;
+    margin: 0 auto;
+    padding: clamp(2rem, 5vw, 3.75rem) clamp(1rem, 4vw, 2.5rem) 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2.25rem, 4vw, 3.25rem);
+  }
+
+  .eyebrow {
+    font: 500 12px/1 var(--mono);
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex; flex-wrap: wrap; gap: .5rem .875rem; align-items: center;
+    margin: 0;
+  }
+  .eyebrow .sep { color: var(--line); }
+
+  h1 {
+    margin: 1rem 0 .875rem;
+    font: 400 clamp(2.4rem, 6.5vw, 3.5rem)/1.03 var(--display);
+    letter-spacing: -.018em;
+    text-wrap: balance;
+  }
+
+  .lede { margin: 0; max-width: 36em; font-size: 1.075rem; color: var(--muted); }
+  .lede strong { color: var(--ink); font-weight: 500; }
+
+  h2 {
+    margin: 0 0 1rem;
+    font: 500 11.5px/1 var(--mono);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  h3 { margin: 0 0 .375rem; font-size: 1rem; font-weight: 600; }
+
+  p { margin: 0 0 .875rem; max-width: 40em; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ---------- the finding ---------- */
+
+  .finding {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    padding: 1.375rem 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .finding p {
+    margin: 0;
+    max-width: 46em;
+    font: 400 clamp(1.05rem, 2.2vw, 1.25rem)/1.5 var(--display);
+  }
+  .finding p + p { margin-top: .75rem; font-size: .9375rem; font-family: var(--sans); color: var(--muted); }
+
+  /* ---------- tables ---------- */
+
+  .scroll { overflow-x: auto; border-radius: 10px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  caption {
+    text-align: left; color: var(--muted); font-size: 13px;
+    padding-bottom: .75rem; max-width: 44em;
+  }
+  th, td { text-align: left; padding: .5625rem .75rem; border-bottom: 1px solid var(--line-soft); }
+  thead th {
+    font: 500 11px var(--mono); letter-spacing: .04em; text-transform: uppercase;
+    color: var(--muted); vertical-align: bottom; line-height: 1.3;
+  }
+  tbody th { font-weight: 500; white-space: nowrap; font-family: var(--mono); font-size: 12.5px; }
+  tbody tr.self { background: var(--accent-wash); }
+  tbody tr.self th { color: var(--accent-ink); font-weight: 600; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  .matrix td { text-align: center; }
+  .matrix thead th { text-align: center; font-size: 10.5px; }
+  .matrix thead th:first-child { text-align: left; }
+  .yes { color: var(--accent); font-weight: 600; }
+  .no { color: var(--line); }
+
+  .lic { font: 500 11.5px var(--mono); padding: .125rem .4375rem; border-radius: 4px; white-space: nowrap; }
+  .lic[data-t="free"] { background: var(--accent-wash); color: var(--accent-ink); }
+  .lic[data-t="paid"] { background: var(--warn-wash); color: var(--warn); }
+
+  /* ---------- claim cards ---------- */
+
+  .claims { display: grid; gap: 1rem; }
+  .claim {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.125rem 1.25rem;
+  }
+  .claim-quote {
+    font: 400 1.0625rem/1.45 var(--display);
+    margin: 0 0 .75rem;
+    max-width: 40em;
+  }
+  .claim dl { margin: 0; display: grid; grid-template-columns: 5.5rem 1fr; gap: .3125rem .875rem; font-size: 13.5px; }
+  @media (max-width: 32rem) { .claim dl { grid-template-columns: 1fr; gap: .125rem; } .claim dd { margin-bottom: .5rem; } }
+  .claim dt {
+    font: 500 10.5px var(--mono); letter-spacing: .07em; text-transform: uppercase;
+    color: var(--muted); padding-top: .2rem;
+  }
+  .claim dd { margin: 0; color: var(--muted); }
+  .claim dd strong { color: var(--ink); font-weight: 500; }
+
+  /* ---------- avoid list ---------- */
+
+  .avoid { display: grid; gap: .75rem; }
+  .avoid-item {
+    display: grid; grid-template-columns: auto 1fr; gap: .875rem;
+    padding: .75rem .9375rem;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    font-size: 14px;
+  }
+  .avoid-mark { color: var(--warn); font-weight: 600; font-family: var(--mono); }
+  .avoid-item p { margin: 0; }
+  .avoid-item .said { color: var(--ink); font-weight: 500; }
+  .avoid-item .why { color: var(--muted); margin-top: .1875rem; }
+
+  /* ---------- wedges ---------- */
+
+  .wedges { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; }
+  .wedge {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 1.125rem 1.25rem;
+  }
+  .wedge h3 { font-size: 1.0625rem; font-family: var(--display); font-weight: 400; margin-bottom: .5rem; }
+  .wedge p { font-size: 14px; color: var(--muted); }
+  .wedge ul { margin: .5rem 0 0; padding-left: 1.125rem; font-size: 14px; color: var(--muted); }
+  .wedge li { margin-bottom: .3125rem; }
+  .wedge li strong { color: var(--ink); font-weight: 500; }
+
+  /* ---------- copy blocks ---------- */
+
+  .copy { display: grid; gap: .875rem; }
+  .copy-block {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    overflow: hidden;
+  }
+  .copy-head {
+    font: 500 10.5px var(--mono); letter-spacing: .07em; text-transform: uppercase;
+    color: var(--muted); padding: .625rem .9375rem; border-bottom: 1px solid var(--line-soft);
+    background: var(--surface-2);
+  }
+  .copy-body { padding: .9375rem; font-size: 14.5px; }
+  .copy-body p { margin: 0 0 .625rem; }
+  .copy-body p:last-child { margin: 0; }
+  .copy-body code { font-family: var(--mono); font-size: 13px; }
+
+  /* ---------- risks ---------- */
+
+  ol.risks { margin: 0; padding-left: 1.25rem; display: grid; gap: .625rem; font-size: 14.5px; max-width: 44em; }
+  ol.risks strong { font-weight: 600; }
+  ol.risks span { color: var(--muted); }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 1.25rem; font-size: 13px; color: var(--muted); max-width: 44em;
+  }
+  footer code, .k { font-family: var(--mono); font-size: 12.5px; }
+  footer p { margin-bottom: .625rem; }
+
+  a { color: var(--accent-ink); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">
+      <span>Positioning brief</span><span class="sep">/</span>
+      <span>guidepost 0.1.1</span><span class="sep">/</span>
+      <span>September 2026</span>
+    </p>
+    <h1>Positioning Guidepost</h1>
+    <p class="lede">
+      Six maintained competitors, measured from their published bundles rather than
+      their documentation. The differentiator turns out to be <strong>narrower and
+      more defensible</strong> than &ldquo;built on native APIs&rdquo; &mdash; and it is not bundle size.
+    </p>
+  </header>
+
+  <section class="finding">
+    <p>
+      Of seven tour libraries, Guidepost is the only one whose shipped code contains
+      <span class="k">inert</span>, the Popover API, CSS anchor positioning, or a
+      reduced-motion rule.
+    </p>
+    <p>
+      Everyone else is still emulating in JavaScript what the browser now does natively,
+      and the accessibility gaps are the visible consequence of that &mdash; not a separate
+      failing. That single sentence is the position. Everything below is evidence for it.
+    </p>
+  </section>
+
+  <section>
+    <h2>Evidence 1 &mdash; what is actually in the bundle</h2>
+    <div class="scroll">
+      <table class="matrix">
+        <caption>
+          Regex probes against each library&rsquo;s published bundle and stylesheet, September 2026.
+          A probe proves a primitive is <em>used</em>, not that it is used correctly &mdash; this is
+          evidence, not an audit. Reproduce with <span class="k">node scripts/compare.mjs</span>.
+        </caption>
+        <thead>
+          <tr>
+            <th>Library</th>
+            <th>Top layer<br>(popover)</th>
+            <th>Native tether<br>(anchor)</th>
+            <th>inert</th>
+            <th>aria-live</th>
+            <th>aria-modal</th>
+            <th>Reduced<br>motion</th>
+            <th>Moves<br>focus</th>
+            <th>Escape<br>exit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="self">
+            <th scope="row">guidepost</th>
+            <td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td>
+            <td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td>
+            <td class="yes">&#10003;</td><td class="yes">&#10003;</td>
+          </tr>
+          <tr>
+            <th scope="row">react-joyride</th>
+            <td class="no">&middot;</td><td class="no">&middot;</td><td class="no">&middot;</td>
+            <td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="no">&middot;</td>
+            <td class="yes">&#10003;</td><td class="yes">&#10003;</td>
+          </tr>
+          <tr>
+            <th scope="row">driver.js</th>
+            <td class="no">&middot;</td><td class="no">&middot;</td><td class="no">&middot;</td>
+            <td class="no">&middot;</td><td class="no">&middot;</td><td class="no">&middot;</td>
+            <td class="yes">&#10003;</td><td class="yes">&#10003;</td>
+          </tr>
+          <tr>
+            <th scope="row">shepherd.js</th>
+            <td class="no">&middot;</td><td class="no">&middot;</td><td class="no">&middot;</td>
+            <td class="no">&middot;</td><td class="no">&middot;</td><td class="no">&middot;</td>
+            <td class="yes">&#10003;</td><td class="yes">&#10003;</td>
+          </tr>
+          <tr>
+            <th scope="row">intro.js</th>
+            <td class="no">&middot;</td><td class="no">&middot;</td><td class="no">&middot;</td>
+            <td class="no">&middot;</td><td class="no">&middot;</td><td class="no">&middot;</td>
+            <td class="yes">&#10003;</td><td class="yes">&#10003;</td>
+          </tr>
+          <tr>
+            <th scope="row">tourguidejs</th>
+            <td class="no">&middot;</td><td class="no">&middot;</td><td class="no">&middot;</td>
+            <td class="no">&middot;</td><td class="no">&middot;</td><td class="no">&middot;</td>
+            <td class="yes">&#10003;</td><td class="yes">&#10003;</td>
+          </tr>
+          <tr>
+            <th scope="row">@reactour/tour</th>
+            <td class="no">&middot;</td><td class="no">&middot;</td><td class="no">&middot;</td>
+            <td class="no">&middot;</td><td class="no">&middot;</td><td class="no">&middot;</td>
+            <td class="no">&middot;</td><td class="yes">&#10003;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Evidence 2 &mdash; size and licence</h2>
+    <div class="scroll">
+      <table>
+        <caption>
+          Each library&rsquo;s own published bundle, minified and gzipped, with its shipped
+          stylesheet included. Runtime dependencies are counted separately because they
+          land in the consuming app&rsquo;s bundle too.
+        </caption>
+        <thead>
+          <tr>
+            <th>Library</th><th>Own bundle</th><th>Runtime deps</th><th>Licence</th><th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">@reactour/tour 3.8</th>
+            <td class="num">6.5 kB</td><td class="num">3</td>
+            <td><span class="lic" data-t="free">MIT</span></td>
+            <td>Plus ~7 kB of <span class="k">@reactour/*</span> packages, plus React</td>
+          </tr>
+          <tr>
+            <th scope="row">driver.js 1.8</th>
+            <td class="num">7.9 kB</td><td class="num">0</td>
+            <td><span class="lic" data-t="free">MIT</span></td>
+            <td>The size leader. No focus containment, no live region</td>
+          </tr>
+          <tr class="self">
+            <th scope="row">guidepost 0.1.1</th>
+            <td class="num">9.4 kB</td><td class="num">0</td>
+            <td><span class="lic" data-t="free">MIT</span></td>
+            <td>Stylesheet inlined; 1.5 kB more than driver.js</td>
+          </tr>
+          <tr>
+            <th scope="row">shepherd.js 15.3</th>
+            <td class="num">16.2 kB</td><td class="num">2</td>
+            <td><span class="lic" data-t="paid">AGPL-3.0</span></td>
+            <td>Plus Floating UI (~9 kB untreeshaken). Commercial licence required</td>
+          </tr>
+          <tr>
+            <th scope="row">tourguidejs 1.1</th>
+            <td class="num">17.6 kB</td><td class="num">0</td>
+            <td><span class="lic" data-t="free">BSD-3</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th scope="row">intro.js 8.5</th>
+            <td class="num">19.3 kB</td><td class="num">0</td>
+            <td><span class="lic" data-t="paid">AGPL-3.0</span></td>
+            <td>Commercial licence required</td>
+          </tr>
+          <tr>
+            <th scope="row">react-joyride 3.2</th>
+            <td class="num">19.9 kB</td><td class="num">10</td>
+            <td><span class="lic" data-t="free">MIT</span></td>
+            <td>React only. Best a11y of the incumbents</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Three claims you can defend</h2>
+    <div class="claims">
+
+      <div class="claim">
+        <p class="claim-quote">
+          &ldquo;The only tour library that contains the word <span class="k">inert</span>.&rdquo;
+        </p>
+        <dl>
+          <dt>Evidence</dt>
+          <dd>Six competitors, zero uses. <strong>Every one of them either leaves background
+            content reachable by Tab or fakes containment by intercepting keydown.</strong></dd>
+          <dt>Why it lands</dt>
+          <dd>It is concrete, falsifiable in ten seconds, and maps directly onto WCAG 2.1.2 and
+            2.4.3 &mdash; the two criteria tours fail most often.</dd>
+          <dt>Caveat</dt>
+          <dd>Say &ldquo;uses&rdquo;, never &ldquo;is the only accessible one&rdquo;. React Joyride does
+            real focus work without <span class="k">inert</span>.</dd>
+        </dl>
+      </div>
+
+      <div class="claim">
+        <p class="claim-quote">
+          &ldquo;No positioning engine. The browser keeps the card attached.&rdquo;
+        </p>
+        <dl>
+          <dt>Evidence</dt>
+          <dd>Shepherd and React Joyride ship Floating UI; Guidepost ships
+            <strong>zero runtime dependencies</strong> and uses
+            <span class="k">position-anchor</span>, with a measured fallback.</dd>
+          <dt>Why it lands</dt>
+          <dd>Developers understand dependency weight instinctively. It is also the claim that
+            ages <em>into</em> being true &mdash; anchor positioning support grows every quarter.</dd>
+          <dt>Caveat</dt>
+          <dd>Anchor positioning is not Baseline yet (Chrome&nbsp;125+, Safari&nbsp;26+,
+            Firefox&nbsp;147+). Lead with the fallback, never hide it.</dd>
+        </dl>
+      </div>
+
+      <div class="claim">
+        <p class="claim-quote">
+          &ldquo;The animation respects <span class="k">prefers-reduced-motion</span>. Nobody else&rsquo;s does.&rdquo;
+        </p>
+        <dl>
+          <dt>Evidence</dt>
+          <dd>Not one competitor stylesheet contains the media query, and
+            <strong>a spotlight sliding across the viewport is exactly the motion that
+            triggers vestibular symptoms.</strong></dd>
+          <dt>Why it lands</dt>
+          <dd>It is the detail that signals the whole library was built by someone who
+            actually cares, rather than someone who added ARIA attributes at the end.</dd>
+          <dt>Caveat</dt>
+          <dd>Small on its own. Use it as the third beat, never the headline.</dd>
+        </dl>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Claims to avoid</h2>
+    <div class="avoid">
+      <div class="avoid-item">
+        <span class="avoid-mark">&#10007;</span>
+        <div>
+          <p class="said">&ldquo;The smallest tour library.&rdquo;</p>
+          <p class="why">Driver.js is 7.9 kB to your 9.4 kB. Someone will check within the hour.
+            Say <em>&ldquo;the smallest one that contains a focus contract&rdquo;</em> &mdash; still true, and
+            the qualifier is the actual selling point.</p>
+        </div>
+      </div>
+      <div class="avoid-item">
+        <span class="avoid-mark">&#10007;</span>
+        <div>
+          <p class="said">&ldquo;WCAG 2.2 AA compliant.&rdquo;</p>
+          <p class="why">A library cannot be compliant; an integration can. Claim the specific
+            mechanisms &mdash; focus enters and returns, background is inert, step changes announce,
+            Escape always exits &mdash; and let the buyer map them to criteria.</p>
+        </div>
+      </div>
+      <div class="avoid-item">
+        <span class="avoid-mark">&#10007;</span>
+        <div>
+          <p class="said">&ldquo;Zero dependencies&rdquo; as the headline.</p>
+          <p class="why">Driver.js, Intro.js and TourGuide.js are all zero-dependency too. It is
+            a supporting fact, not a wedge.</p>
+        </div>
+      </div>
+      <div class="avoid-item">
+        <span class="avoid-mark">&#10007;</span>
+        <div>
+          <p class="said">&ldquo;Shepherd is expensive, use this instead.&rdquo;</p>
+          <p class="why">Licence-cost framing invites the reply &ldquo;then I will use Driver.js, which is
+            also free.&rdquo; Licence is the reason people <em>start</em> looking; accessibility is the
+            reason they should pick you. Lead with the second.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Two audiences, two openings</h2>
+    <div class="wedges">
+      <div class="wedge">
+        <h3>Developers choosing a library</h3>
+        <p>They arrive from a search, a README, or Hacker News, and they decide in about ninety
+          seconds. Lead with the mechanism, not the benefit.</p>
+        <ul>
+          <li><strong>Hook:</strong> the browser now does the four hard parts; here is what is left.</li>
+          <li><strong>Proof:</strong> the before/after table &mdash; Popper vs <span class="k">position-anchor</span>,
+            sentinel nodes vs <span class="k">inert</span>.</li>
+          <li><strong>Close:</strong> a live demo that reports which primitives <em>their</em> browser has.</li>
+        </ul>
+      </div>
+      <div class="wedge">
+        <h3>Teams under an accessibility mandate</h3>
+        <p>The European Accessibility Act became enforceable in June 2025, and EN&nbsp;301&nbsp;549
+          &mdash; which incorporates WCAG&nbsp;2.1&nbsp;AA in full &mdash; is the harmonised standard.
+          Existing service contracts have until June 2027.</p>
+        <ul>
+          <li><strong>Hook:</strong> your onboarding tour is the most common accessibility
+            regression in the product, because it is bolted on last.</li>
+          <li><strong>Proof:</strong> the primitives matrix, plus the frame-by-frame test suite.</li>
+          <li><strong>Close:</strong> a page mapping each mechanism to the criterion it serves.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Copy you can paste</h2>
+    <div class="copy">
+      <div class="copy-block">
+        <div class="copy-head">npm description &mdash; 130 characters</div>
+        <div class="copy-body">
+          <p>Accessible product tours on native browser primitives. Popover API, anchor
+            positioning, <code>inert</code>. MIT, zero dependencies.</p>
+        </div>
+      </div>
+      <div class="copy-block">
+        <div class="copy-head">GitHub tagline</div>
+        <div class="copy-body">
+          <p>Product tours that use <code>inert</code>, the Popover API and CSS anchor
+            positioning &mdash; because the browser does the hard parts now.</p>
+        </div>
+      </div>
+      <div class="copy-block">
+        <div class="copy-head">README opening &mdash; the two paragraphs above the fold</div>
+        <div class="copy-body">
+          <p>Guidepost is a product-tour library with no positioning engine. The top layer, the
+            tether, the focus containment and the exit animation are all things the browser now
+            does natively, so what is left to write is the step machine and the accessibility
+            contract &mdash; 9.4 kB of it, with no dependencies.</p>
+          <p>That is also why it is the only tour library whose shipped bundle contains
+            <code>inert</code>. Focus containment is not a feature that was added; it is what
+            you get when you stop reimplementing the platform.</p>
+        </div>
+      </div>
+      <div class="copy-block">
+        <div class="copy-head">Show HN opener</div>
+        <div class="copy-body">
+          <p>Show HN: Guidepost &mdash; a product-tour library built on <code>inert</code>, the
+            Popover API and CSS anchor positioning</p>
+          <p>I needed a tour for a commercial app and found that the two best-known options are
+            AGPL with paid commercial licences. Before writing another one I checked what the
+            platform does now, and it turns out to be most of it. I also ran a probe over the
+            six maintained alternatives: none of them use <code>inert</code>, and none respect
+            <code>prefers-reduced-motion</code>. The comparison script is in the repo, so please
+            check my work.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Risks, honestly</h2>
+    <ol class="risks">
+      <li><strong>Driver.js is smaller and has 26k stars.</strong>
+        <span>For anyone who does not care about accessibility, it wins. Do not fight on its
+        ground; make accessibility the axis of comparison.</span></li>
+      <li><strong>The name may be taken on npm.</strong>
+        <span>Check before any launch post. A rename after the first thousand installs is far
+        more expensive than one now.</span></li>
+      <li><strong>Anchor positioning is not Baseline.</strong>
+        <span>An honest support table on the landing page pre-empts the top Hacker News comment.
+        Volunteering the limitation is worth more than the limitation costs.</span></li>
+      <li><strong>Zero adoption and one maintainer.</strong>
+        <span>Enterprise buyers read that as risk. Mitigate with the test suite, a changelog,
+        and a written scope boundary &mdash; what this library will never try to do.</span></li>
+      <li><strong>The probe table is evidence, not an audit.</strong>
+        <span>If someone runs axe against a real Guidepost integration and finds violations, the
+        whole position takes damage. Publish an axe run against the demo before the launch post,
+        not after.</span></li>
+    </ol>
+  </section>
+
+  <footer>
+    <p><strong>Method.</strong> Each library installed from npm in September 2026 and measured
+      from its published artefacts: own bundle minified and gzipped with any shipped stylesheet
+      included, runtime dependencies from <code>package.json</code>, primitives detected by
+      regex over the bundle and stylesheet. Versions: driver.js 1.8.0, shepherd.js 15.3.0,
+      intro.js 8.5.0, react-joyride 3.2.0, @reactour/tour 3.8.0, tourguidejs 1.1.5.
+      Reproduce with <code>node scripts/compare.mjs</code> after installing the six as
+      dev dependencies.</p>
+    <p><strong>Not measured.</strong> Runtime performance, real screen-reader behaviour, and
+      correctness of the ARIA that is present. A library can use <code>aria-live</code> badly.
+      Three of the claims above would be stronger with an axe-core run behind them.</p>
+  </footer>
+
+</div>

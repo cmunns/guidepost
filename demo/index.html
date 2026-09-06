@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guidepost — demo</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f7f9;
+    --panel: #ffffff;
+    --line: #e4e6ec;
+    --ink: #14161c;
+    --muted: #6b7180;
+    --accent: #4f46e5;
+    --radius: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1015;
+      --panel: #171a21;
+      --line: #2a2e38;
+      --ink: #eceef4;
+      --muted: #8d93a3;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .app { display: grid; grid-template-columns: 232px 1fr; min-height: 100vh; }
+
+  .sidebar {
+    border-right: 1px solid var(--line);
+    background: var(--panel);
+    padding: 18px 14px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .brand { display: flex; align-items: center; gap: 9px; font-weight: 650; margin: 4px 6px 18px; }
+  .brand-mark {
+    width: 24px; height: 24px; border-radius: 7px;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 8px;
+    color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500;
+  }
+  .nav-item[aria-current="page"] { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+  .nav-item:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
+
+  .main { display: flex; flex-direction: column; min-width: 0; }
+  .toolbar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 24px; border-bottom: 1px solid var(--line); background: var(--panel);
+  }
+  h1 { font-size: 17px; margin: 0; font-weight: 640; }
+  .spacer { margin-left: auto; }
+  .search {
+    padding: 7px 11px; border: 1px solid var(--line); border-radius: 8px;
+    background: var(--bg); color: inherit; font: inherit; font-size: 14px; width: 220px;
+  }
+  .btn {
+    padding: 7px 13px; border-radius: 8px; border: 1px solid transparent;
+    font: inherit; font-size: 14px; font-weight: 550; cursor: pointer;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost { background: transparent; border-color: var(--line); color: inherit; }
+
+  .content { padding: 24px; display: grid; gap: 18px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 16px;
+  }
+  .card .label { font-size: 12.5px; color: var(--muted); font-weight: 550; letter-spacing: .02em; }
+  .card .value { font-size: 26px; font-weight: 660; margin-top: 4px; letter-spacing: -.02em; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+  .panel-head { padding: 14px 16px; border-bottom: 1px solid var(--line); font-weight: 620; font-size: 14.5px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 550; font-size: 12.5px; }
+  tr:last-child td { border-bottom: 0; }
+  .pill { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); font-weight: 560; }
+
+  .tall { height: 780px; display: grid; place-items: center; color: var(--muted); font-size: 14px; }
+  .footnote { color: var(--muted); font-size: 13px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+  /* Guidepost theming lives entirely in custom properties. */
+  .gp-card { --gp-accent: #4f46e5; --gp-accent-hover: #4338ca; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span> Northwind</div>
+      <a class="nav-item" href="#" aria-current="page" id="nav-home">Overview</a>
+      <a class="nav-item" href="#" id="nav-reports">Reports</a>
+      <a class="nav-item" href="#" id="nav-team">Team</a>
+      <a class="nav-item" href="#" id="nav-settings">Settings</a>
+    </aside>
+
+    <main class="main">
+      <header class="toolbar">
+        <h1>Overview</h1>
+        <div class="spacer"></div>
+        <input class="search" id="search" type="search" placeholder="Search records…" aria-label="Search records">
+        <button class="btn btn-ghost" id="btn-filter">Filter</button>
+        <button class="btn btn-primary" id="btn-new">New record</button>
+      </header>
+
+      <div class="content">
+        <div class="controls">
+          <button class="btn btn-primary" id="start-tour">Start the tour</button>
+          <button class="btn btn-ghost" id="start-js">Start with JS positioning</button>
+          <button class="btn btn-ghost" id="start-noblock">Start non-blocking</button>
+          <span class="footnote" id="support"></span>
+        </div>
+
+        <section class="stats" id="stats">
+          <div class="card"><div class="label">Active records</div><div class="value">2,481</div></div>
+          <div class="card"><div class="label">This week</div><div class="value">+184</div></div>
+          <div class="card"><div class="label">Open issues</div><div class="value">7</div></div>
+          <div class="card"><div class="label">Team members</div><div class="value">12</div></div>
+        </section>
+
+        <section class="panel" id="table-panel">
+          <div class="panel-head">Recent activity</div>
+          <table>
+            <thead><tr><th>Record</th><th>Owner</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Q3 forecast</td><td>A. Munns</td><td><span class="pill">In review</span></td></tr>
+              <tr><td>Vendor renewals</td><td>K. Osei</td><td><span class="pill">Draft</span></td></tr>
+              <tr><td>Headcount plan</td><td>R. Silva</td><td><span class="pill">Approved</span></td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <div class="tall" aria-hidden="true">(a lot of page)</div>
+
+        <section class="panel" id="far-below" style="padding:20px">
+          Scroll target — a step down here proves the smooth-scroll handoff works.
+        </section>
+      </div>
+    </main>
+  </div>
+
+<script type="module">
+import { Tour, supportsAnchorPositioning } from '../dist/index.js';
+
+document.getElementById('support').textContent =
+  supportsAnchorPositioning()
+    ? 'CSS anchor positioning: supported — using the native tether.'
+    : 'CSS anchor positioning: unsupported — using the measured fallback.';
+
+const steps = [
+  {
+    id: 'welcome',
+    title: 'Welcome to Northwind',
+    text: 'A quick five-step tour. Use the arrow keys to move, or press Escape to leave at any point.',
+    placement: 'center',
+  },
+  {
+    id: 'nav',
+    target: '#nav-reports',
+    title: 'Everything lives in the sidebar',
+    text: 'Reports, your team, and workspace settings. The spotlight is a clip-path cutout, so this link is still clickable.',
+    placement: 'right-start',
+  },
+  {
+    id: 'stats',
+    target: '#stats',
+    title: 'Your numbers at a glance',
+    text: 'These refresh every fifteen minutes. The card resizes and glides between steps rather than jumping.',
+    placement: 'bottom',
+    padding: 10,
+  },
+  {
+    id: 'search',
+    target: '#search',
+    title: 'Try typing something',
+    text: 'This step is interactive — the field has focus and the rest of the page is inert. Type anything to continue.',
+    placement: 'bottom-end',
+    focus: 'target',
+    advanceOn: { event: 'input', when: (e) => e.target.value.length > 2 },
+    buttons: [
+      { label: 'Back', action: 'back', variant: 'secondary' },
+      { label: 'Skip', action: 'next', variant: 'ghost' },
+    ],
+  },
+  {
+    id: 'below',
+    target: '#far-below',
+    title: 'Scrolling is handled',
+    text: 'The tour scrolls the target into view and waits for the scroll to settle before it positions anything.',
+    placement: 'top',
+  },
+  {
+    id: 'new',
+    target: '#btn-new',
+    title: 'Create your first record',
+    text: 'That is the whole tour. Everything here is native: Popover API for layering, anchor positioning for the tether, inert for focus containment.',
+    placement: 'bottom-end',
+  },
+];
+
+const base = {
+  id: 'northwind-onboarding',
+  steps,
+  onComplete: () => console.log('[demo] tour completed'),
+  onCancel: () => console.log('[demo] tour cancelled'),
+};
+
+let active = null;
+function launch(extra) {
+  active?.destroy();
+  active = new Tour({ ...base, ...extra });
+  active.start();
+  window.__tour = active;
+}
+
+document.getElementById('start-tour').addEventListener('click', () => launch({}));
+document.getElementById('start-js').addEventListener('click', () => launch({ strategy: 'js' }));
+document.getElementById('start-noblock').addEventListener('click', () =>
+  launch({ blocking: false }),
+);
+
+window.__launch = launch;
+window.__Tour = Tour;
+</script>
+</body>
+</html>

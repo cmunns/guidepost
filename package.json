@@ -1,0 +1,52 @@
+{
+  "name": "guidepost",
+  "version": "0.1.4",
+  "description": "Accessible product tours built on native browser primitives — Popover API, CSS anchor positioning, and animated clip-path spotlights. No positioning dependency.",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./guidepost.css": "./dist/guidepost.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "tour",
+    "onboarding",
+    "walkthrough",
+    "product-tour",
+    "accessibility",
+    "a11y",
+    "popover",
+    "anchor-positioning"
+  ],
+  "scripts": {
+    "build": "tsup && node scripts/emit-css.mjs",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsup --watch",
+    "test": "playwright test",
+    "prepublishOnly": "npm run build",
+    "demo": "node scripts/build-demo.mjs",
+    "compare": "node scripts/compare.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

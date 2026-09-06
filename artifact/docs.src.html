@@ -1,0 +1,831 @@
+<title>Guidepost Docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+
+<style>
+  :root {
+    --ground: #e9ecef;
+    --surface: #ffffff;
+    --surface-2: #f3f5f7;
+    --code-bg: #f5f7f9;
+    --line: #d8dde3;
+    --line-soft: #e6eaee;
+    --ink: #12171c;
+    --muted: #5c6672;
+    --accent: #0f766e;
+    --accent-ink: #0b5a54;
+    --accent-wash: #0f766e14;
+    --accent-text: #f6fffd;
+    --warn: #a8453b;
+    --warn-wash: #a8453b12;
+    --shadow: 0 1px 2px rgb(18 23 28 / .05), 0 12px 32px -14px rgb(18 23 28 / .22);
+
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --display: "Newsreader", Georgia, "Times New Roman", serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0d1114;
+      --surface: #161b1f;
+      --surface-2: #1d2429;
+      --code-bg: #11161a;
+      --line: #2a3238;
+      --line-soft: #232a30;
+      --ink: #e4e9ed;
+      --muted: #8e99a4;
+      --accent: #2dd4bf;
+      --accent-ink: #5eead4;
+      --accent-wash: #2dd4bf1a;
+      --accent-text: #08201d;
+      --warn: #e08376;
+      --warn-wash: #e0837614;
+      --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 14px 36px -14px rgb(0 0 0 / .6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0d1114;
+    --surface: #161b1f;
+    --surface-2: #1d2429;
+    --code-bg: #11161a;
+    --line: #2a3238;
+    --line-soft: #232a30;
+    --ink: #e4e9ed;
+    --muted: #8e99a4;
+    --accent: #2dd4bf;
+    --accent-ink: #5eead4;
+    --accent-wash: #2dd4bf1a;
+    --accent-text: #08201d;
+    --warn: #e08376;
+    --warn-wash: #e0837614;
+    --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 14px 36px -14px rgb(0 0 0 / .6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font: 400 15.5px/1.62 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell {
+    max-width: 76rem;
+    margin: 0 auto;
+    padding: clamp(1.75rem, 4vw, 3rem) clamp(1rem, 4vw, 2.5rem) 4rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  @media (min-width: 62rem) {
+    .shell { grid-template-columns: 13rem 1fr; align-items: start; gap: 3rem; }
+    .toc { position: sticky; top: 1.5rem; }
+  }
+
+  /* ---------- table of contents ---------- */
+
+  .toc { font-size: 13.5px; }
+  .toc-head {
+    font: 500 10.5px var(--mono); letter-spacing: .09em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: .625rem;
+  }
+  .toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: .1875rem; }
+  .toc a {
+    display: block; padding: .25rem .5rem; border-radius: 6px;
+    color: var(--muted); text-decoration: none;
+  }
+  .toc a:hover { background: var(--accent-wash); color: var(--accent-ink); }
+  .toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  /* ---------- content ---------- */
+
+  main { min-width: 0; display: flex; flex-direction: column; gap: clamp(2rem, 3.5vw, 2.75rem); }
+
+  .eyebrow {
+    font: 500 12px/1 var(--mono); letter-spacing: .09em; text-transform: uppercase;
+    color: var(--muted); margin: 0; display: flex; flex-wrap: wrap; gap: .5rem .875rem;
+  }
+  .eyebrow .sep { color: var(--line); }
+
+  h1 {
+    margin: .875rem 0 .75rem;
+    font: 400 clamp(2.3rem, 6vw, 3.25rem)/1.03 var(--display);
+    letter-spacing: -.018em;
+  }
+  .lede { margin: 0; max-width: 38em; font-size: 1.05rem; color: var(--muted); }
+
+  section { scroll-margin-top: 1.5rem; }
+
+  h2 {
+    margin: 0 0 .875rem;
+    font: 500 11.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: .625rem; border-bottom: 1px solid var(--line);
+  }
+  h3 { margin: 1.5rem 0 .5rem; font-size: 1.0625rem; font-weight: 600; }
+  h3:first-of-type { margin-top: 0; }
+
+  p { margin: 0 0 .875rem; max-width: 42em; }
+  p:last-child { margin-bottom: 0; }
+
+  code, .k { font-family: var(--mono); font-size: .875em; }
+  p code, li code, td code, dd code {
+    background: var(--accent-wash); color: var(--accent-ink);
+    padding: .0625rem .3125rem; border-radius: 4px;
+  }
+
+  pre {
+    margin: 0 0 .875rem;
+    background: var(--code-bg);
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    padding: .9375rem 1.0625rem;
+    overflow-x: auto;
+    font: 400 13px/1.6 var(--mono);
+  }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+  .c { color: var(--muted); }
+  .s { color: var(--accent-ink); }
+
+  ul, ol.plain { margin: 0 0 .875rem; padding-left: 1.25rem; max-width: 42em; }
+  li { margin-bottom: .3125rem; }
+
+  /* ---------- sandbox ---------- */
+
+  .sandbox {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    overflow: hidden; box-shadow: var(--shadow); display: grid; grid-template-columns: 150px 1fr;
+  }
+  @media (max-width: 40rem) { .sandbox { grid-template-columns: 1fr; } .sb-rail { display: none; } }
+  .sb-rail {
+    background: var(--surface-2); border-right: 1px solid var(--line-soft);
+    padding: .75rem .625rem; display: flex; flex-direction: column; gap: 2px;
+  }
+  .sb-brand { display: flex; align-items: center; gap: .4375rem; font-weight: 600; font-size: 12.5px; margin: .1875rem .375rem .75rem; }
+  .sb-mark { width: 16px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .sb-rail a { padding: .3125rem .4375rem; border-radius: 5px; font-size: 12.5px; color: var(--muted); text-decoration: none; }
+  .sb-rail a[aria-current] { background: var(--accent-wash); color: var(--accent-ink); font-weight: 500; }
+  .sb-rail a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .sb-main { min-width: 0; }
+  .sb-bar { display: flex; align-items: center; gap: .5rem; padding: .625rem .875rem; border-bottom: 1px solid var(--line-soft); }
+  .sb-bar strong { font-size: 13px; font-weight: 600; }
+  .sb-bar .grow { margin-left: auto; }
+  .sb-field {
+    font: 400 12.5px var(--sans); padding: .3125rem .5rem; border-radius: 6px;
+    border: 1px solid var(--line); background: var(--ground); color: inherit; width: min(160px, 38vw);
+  }
+  .sb-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 1px; background: var(--line-soft); }
+  .sb-tile { background: var(--surface); padding: .625rem .75rem; }
+  .sb-tile dt { font: 400 10.5px var(--mono); color: var(--muted); letter-spacing: .03em; }
+  .sb-tile dd { margin: .125rem 0 0; font-size: 1.1rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* ---------- buttons ---------- */
+
+  button {
+    font: 500 13.5px/1 var(--sans); padding: .5rem .8125rem; border-radius: 7px;
+    border: 1px solid var(--line); background: var(--surface-2); color: inherit; cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease;
+  }
+  button:hover { border-color: var(--accent); color: var(--accent-ink); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.solid { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  button.solid:hover { background: var(--accent-ink); border-color: var(--accent-ink); color: var(--accent-text); }
+  .sb-bar button { font-size: 12.5px; padding: .3125rem .625rem; }
+
+  .runbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: 0 0 .875rem; }
+  .runbar .hint { font-size: 12.5px; color: var(--muted); }
+
+  /* ---------- tables ---------- */
+
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 32rem; }
+  th, td { text-align: left; padding: .5rem .75rem .5rem 0; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  thead th { font: 500 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  tbody th { font-family: var(--mono); font-size: 12.5px; font-weight: 500; white-space: nowrap; color: var(--accent-ink); }
+  td.t { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+  td.d { color: var(--muted); }
+
+  /* ---------- callout ---------- */
+
+  .note {
+    border-left: 3px solid var(--accent); background: var(--surface);
+    border-radius: 0 10px 10px 0; padding: .875rem 1.0625rem; margin: 0 0 .875rem;
+    font-size: 14.5px;
+  }
+  .note[data-t="warn"] { border-left-color: var(--warn); }
+  .note strong { font-weight: 600; }
+  .note p { margin-bottom: .5rem; }
+
+  footer { border-top: 1px solid var(--line); padding-top: 1.25rem; font-size: 13px; color: var(--muted); }
+
+  /* ---------- guidepost theming ---------- */
+
+  .gp-card {
+    --gp-accent: #0f766e; --gp-accent-hover: #0b5a54; --gp-radius: 10px;
+    --gp-font: 400 14.5px/1.55 "IBM Plex Sans", system-ui, sans-serif;
+  }
+  .gp-counter { font-family: "IBM Plex Mono", monospace; }
+  .gp-ring { --gp-ring-halo: rgb(15 118 110 / .3); }
+  @media (prefers-color-scheme: dark) {
+    .gp-card { --gp-accent: #2dd4bf; --gp-accent-hover: #5eead4; --gp-accent-text: #08201d; }
+    .gp-ring { --gp-ring-halo: rgb(45 212 191 / .32); --gp-ring-color: rgb(255 255 255 / .7); }
+  }
+</style>
+
+<div class="shell">
+
+  <nav class="toc" aria-label="On this page">
+    <div class="toc-head">On this page</div>
+    <ol>
+      <li><a href="#install">Install</a></li>
+      <li><a href="#start">Quick start</a></li>
+      <li><a href="#sandbox">Live sandbox</a></li>
+      <li><a href="#steps">Steps</a></li>
+      <li><a href="#options">Options</a></li>
+      <li><a href="#methods">Methods</a></li>
+      <li><a href="#placement">Placement</a></li>
+      <li><a href="#modes">Blocking modes</a></li>
+      <li><a href="#async">Async steps</a></li>
+      <li><a href="#buttons">Buttons &amp; labels</a></li>
+      <li><a href="#styling">Styling</a></li>
+      <li><a href="#a11y">Accessibility</a></li>
+      <li><a href="#support">Browser support</a></li>
+      <li><a href="#recipes">Recipes</a></li>
+      <li><a href="#trouble">Troubleshooting</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <header>
+      <p class="eyebrow">
+        <span>v0.1.1</span><span class="sep">/</span>
+        <span>MIT</span><span class="sep">/</span>
+        <span>9.4 kB gzipped</span><span class="sep">/</span>
+        <span>0 dependencies</span>
+      </p>
+      <h1>Guidepost Docs</h1>
+      <p class="lede">
+        Every example on this page is live. The buttons run real tours against the
+        sandbox below, using the same build you would install from npm.
+      </p>
+    </header>
+
+    <section id="install">
+      <h2>Install</h2>
+      <pre><code>npm install guidepost</code></pre>
+      <p>
+        Ships ESM and CJS with TypeScript types. The stylesheet is injected automatically
+        on first use &mdash; if you would rather own the CSS pipeline, import it yourself
+        and pass <code>injectStyles: false</code>:
+      </p>
+      <pre><code><span class="c">// only if you set injectStyles: false</span>
+<span class="s">import</span> <span class="s">'guidepost/guidepost.css'</span>;</code></pre>
+    </section>
+
+    <section id="start">
+      <h2>Quick start</h2>
+      <p>A tour is an array of steps and a call to <code>start()</code>.</p>
+      <pre><code><span class="s">import</span> { Tour } <span class="s">from</span> <span class="s">'guidepost'</span>;
+
+<span class="s">const</span> tour = <span class="s">new</span> Tour({
+  steps: [
+    { title: <span class="s">'Welcome'</span>, text: <span class="s">'A quick tour.'</span>, placement: <span class="s">'center'</span> },
+    { target: <span class="s">'#sidebar'</span>, title: <span class="s">'Navigation'</span>, text: <span class="s">'Everything lives here.'</span> },
+    { target: <span class="s">'#new-button'</span>, title: <span class="s">'Create'</span>, text: <span class="s">'Start here when you are ready.'</span> },
+  ],
+});
+
+tour.start();</code></pre>
+      <p>
+        That is the whole minimum. Focus moves into the card, the rest of the page goes
+        inert, Escape exits, arrow keys move between steps, and the spotlighted element
+        stays clickable.
+      </p>
+      <div class="runbar">
+        <button class="solid" data-run="quickstart">Run this example</button>
+        <span class="hint">Escape exits at any point.</span>
+      </div>
+    </section>
+
+    <section id="sandbox">
+      <h2>Live sandbox</h2>
+      <p>Every &ldquo;Run this&rdquo; button on the page drives this panel.</p>
+      <div class="sandbox" id="sandbox">
+        <nav class="sb-rail" aria-label="Sandbox navigation">
+          <div class="sb-brand"><span class="sb-mark" aria-hidden="true"></span> Meridian</div>
+          <a href="#sandbox" aria-current="page">Overview</a>
+          <a href="#sandbox" id="sb-shipments">Shipments</a>
+          <a href="#sandbox" id="sb-carriers">Carriers</a>
+          <a href="#sandbox" id="sb-settings">Settings</a>
+        </nav>
+        <div class="sb-main">
+          <div class="sb-bar">
+            <strong>Overview</strong>
+            <span class="grow"></span>
+            <input class="sb-field" id="sb-search" type="search" placeholder="Filter lanes..." aria-label="Filter lanes">
+            <button id="sb-new">New lane</button>
+          </div>
+          <dl class="sb-tiles" id="sb-tiles">
+            <div class="sb-tile"><dt>in transit</dt><dd>1,204</dd></div>
+            <div class="sb-tile"><dt>on time</dt><dd>94.2%</dd></div>
+            <div class="sb-tile"><dt>exceptions</dt><dd>17</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section id="steps">
+      <h2>Steps</h2>
+      <p>
+        Only <code>target</code> and some content are meaningful on their own. Everything
+        else has a working default.
+      </p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">id</th><td class="t">string</td><td class="d">Stable handle for <code>goTo('id')</code>, deep links and analytics.</td></tr>
+            <tr><th scope="row">target</th><td class="t">string | Element | fn</td><td class="d">CSS selector, element, or a function returning one. Omit for a centred step.</td></tr>
+            <tr><th scope="row">title</th><td class="t">string</td><td class="d">Heading. Becomes part of the card's accessible name.</td></tr>
+            <tr><th scope="row">text</th><td class="t">string</td><td class="d">Body copy, inserted as text &mdash; never parsed as HTML.</td></tr>
+            <tr><th scope="row">html</th><td class="t">string | HTMLElement</td><td class="d">Escape hatch for markup. You own the sanitising.</td></tr>
+            <tr><th scope="row">placement</th><td class="t">Placement</td><td class="d">See <a href="#placement">Placement</a>. Defaults to the tour's.</td></tr>
+            <tr><th scope="row">offset</th><td class="t">number</td><td class="d">Gap between target and card, in px. Default 12.</td></tr>
+            <tr><th scope="row">padding</th><td class="t">number</td><td class="d">Breathing room around the spotlight cutout. Default 6.</td></tr>
+            <tr><th scope="row">radius</th><td class="t">number</td><td class="d">Spotlight corner radius. Defaults to the target's own.</td></tr>
+            <tr><th scope="row">interactive</th><td class="t">boolean</td><td class="d">Keep this target clickable. Overrides the tour setting.</td></tr>
+            <tr><th scope="row">buttons</th><td class="t">StepButton[]</td><td class="d">Replaces the default row. See <a href="#buttons">Buttons</a>.</td></tr>
+            <tr><th scope="row">scrollTo</th><td class="t">boolean</td><td class="d">Default true &mdash; but only scrolls if the target is actually clipped.</td></tr>
+            <tr><th scope="row">waitFor</th><td class="t">number | fn</td><td class="d">Milliseconds to wait for the target, or a predicate to await.</td></tr>
+            <tr><th scope="row">advanceOn</th><td class="t">{ selector?, event, when? }</td><td class="d">Advance when the user performs the real action.</td></tr>
+            <tr><th scope="row">beforeShow</th><td class="t">(tour) =&gt; void | Promise</td><td class="d">Runs before the step renders. Await it to delay.</td></tr>
+            <tr><th scope="row">afterHide</th><td class="t">(tour) =&gt; void | Promise</td><td class="d">Runs after the step is torn down.</td></tr>
+            <tr><th scope="row">focus</th><td class="t">'card' | 'target' | 'none'</td><td class="d">Where focus lands. Default <code>card</code>.</td></tr>
+            <tr><th scope="row">when</th><td class="t">() =&gt; boolean</td><td class="d">Return false to skip the step entirely.</td></tr>
+            <tr><th scope="row">classes</th><td class="t">string</td><td class="d">Extra class names on the card, for per-step styling.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="options">
+      <h2>Options</h2>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">steps</th><td class="t">&mdash;</td><td class="d">Required.</td></tr>
+            <tr><th scope="row">id</th><td class="t">&mdash;</td><td class="d">Used by <code>remember</code> and written into the root as a data attribute.</td></tr>
+            <tr><th scope="row">blocking</th><td class="t">true</td><td class="d">Apply <code>inert</code> to the rest of the page.</td></tr>
+            <tr><th scope="row">interactive</th><td class="t">true</td><td class="d">Keep the spotlighted element usable.</td></tr>
+            <tr><th scope="row">placement</th><td class="t">'bottom'</td><td class="d">Default for every step.</td></tr>
+            <tr><th scope="row">fallbackPlacements</th><td class="t">[]</td><td class="d">Tried in order when the preferred one does not fit (JS strategy).</td></tr>
+            <tr><th scope="row">offset / padding / radius</th><td class="t">12 / 6 / auto</td><td class="d">Tour-wide geometry defaults.</td></tr>
+            <tr><th scope="row">strategy</th><td class="t">'auto'</td><td class="d"><code>auto</code>, <code>anchor</code> or <code>js</code>. See <a href="#support">Browser support</a>.</td></tr>
+            <tr><th scope="row">keyboard</th><td class="t">true</td><td class="d">Escape, arrows, Home and End.</td></tr>
+            <tr><th scope="row">exitOnEscape</th><td class="t">true</td><td class="d">Escape cancels the tour.</td></tr>
+            <tr><th scope="row">exitOnOverlayClick</th><td class="t">false</td><td class="d">Clicking the dim cancels. Requires <code>blocking</code>.</td></tr>
+            <tr><th scope="row">showClose / showProgress / showCounter</th><td class="t">true</td><td class="d">Chrome toggles.</td></tr>
+            <tr><th scope="row">animate</th><td class="t">'auto'</td><td class="d"><code>auto</code> honours <code>prefers-reduced-motion</code>.</td></tr>
+            <tr><th scope="row">flip</th><td class="t">true</td><td class="d">Morph the card between steps instead of jumping.</td></tr>
+            <tr><th scope="row">injectStyles</th><td class="t">true</td><td class="d">Set false if you import the CSS yourself.</td></tr>
+            <tr><th scope="row">container</th><td class="t">document.body</td><td class="d">Where the tour DOM is appended.</td></tr>
+            <tr><th scope="row">onMissingTarget</th><td class="t">'skip'</td><td class="d"><code>skip</code>, <code>center</code> or <code>error</code>.</td></tr>
+            <tr><th scope="row">remember</th><td class="t">false</td><td class="d">Writes <code>guidepost:&lt;id&gt;</code> to localStorage on completion.</td></tr>
+            <tr><th scope="row">labels</th><td class="t">English</td><td class="d">Every string is overridable. See <a href="#buttons">Labels</a>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Callbacks</h3>
+      <pre><code><span class="s">new</span> Tour({
+  steps,
+  onStart:    (tour) =&gt; analytics.track(<span class="s">'tour_started'</span>),
+  onShow:     (tour, step, i) =&gt; analytics.track(<span class="s">'tour_step'</span>, { id: step.id, i }),
+  onComplete: (tour) =&gt; analytics.track(<span class="s">'tour_completed'</span>),
+  onCancel:   (tour) =&gt; analytics.track(<span class="s">'tour_abandoned'</span>, { at: tour.index }),
+  onDestroy:  (tour) =&gt; {},
+});</code></pre>
+    </section>
+
+    <section id="methods">
+      <h2>Methods</h2>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Method</th><th>Returns</th><th></th></tr></thead>
+          <tbody>
+            <tr><th scope="row">start(at?)</th><td class="t">Promise</td><td class="d">Opens the tour. <code>at</code> is a step index or id.</td></tr>
+            <tr><th scope="row">next() / back()</th><td class="t">Promise</td><td class="d">Move one step, skipping any whose <code>when()</code> is false.</td></tr>
+            <tr><th scope="row">goTo(indexOrId)</th><td class="t">Promise</td><td class="d">Jump to a step.</td></tr>
+            <tr><th scope="row">complete() / cancel()</th><td class="t">Promise</td><td class="d">End the tour. Only <code>complete()</code> counts for <code>remember</code>.</td></tr>
+            <tr><th scope="row">refresh()</th><td class="t">void</td><td class="d">Recompute position and spotlight without changing step.</td></tr>
+            <tr><th scope="row">destroy()</th><td class="t">void</td><td class="d">Ends the tour and removes its DOM. Call this on unmount.</td></tr>
+            <tr><th scope="row">index / current / isActive</th><td class="t">getters</td><td class="d">Current state.</td></tr>
+            <tr><th scope="row">Tour.hasCompleted(id)</th><td class="t">boolean</td><td class="d">Static. Reads the <code>remember</code> flag.</td></tr>
+            <tr><th scope="row">Tour.clearCompleted(id)</th><td class="t">void</td><td class="d">Static. Lets a user replay the tour.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="placement">
+      <h2>Placement</h2>
+      <p>
+        Four sides, each with an optional alignment:
+        <code>top</code>, <code>right</code>, <code>bottom</code>, <code>left</code>,
+        any of them suffixed <code>-start</code>, <code>-center</code> or <code>-end</code>,
+        plus <code>center</code> for a card with no target at all.
+      </p>
+      <p>
+        You are stating a preference, not a coordinate. When the card will not fit, the
+        browser's <code>position-try-fallbacks</code> flips it &mdash; or, on the JS path,
+        your <code>fallbackPlacements</code> are tried in order and the card is clamped
+        into the viewport. The arrow is measured after the fact, so it always agrees with
+        where the card actually ended up.
+      </p>
+      <div class="runbar">
+        <button data-run="place-top">top</button>
+        <button data-run="place-right">right-start</button>
+        <button data-run="place-bottom">bottom-end</button>
+        <button data-run="place-center">center</button>
+      </div>
+    </section>
+
+    <section id="modes">
+      <h2>Blocking modes</h2>
+      <p>Three combinations, and the choice matters more than any styling decision.</p>
+
+      <h3>Blocking and interactive &mdash; the default</h3>
+      <p>
+        The page is dimmed and inert, but the spotlighted element stays live, so the user
+        can do the thing the step is describing. The cutout passes clicks through because
+        <code>clip-path</code> affects hit testing.
+      </p>
+      <pre><code><span class="s">new</span> Tour({ steps }); <span class="c">// blocking: true, interactive: true</span></code></pre>
+      <div class="runbar"><button data-run="mode-default">Run</button></div>
+
+      <h3>Fully blocking</h3>
+      <p>
+        Nothing outside the card responds. Use it for steps that are purely explanatory,
+        where a stray click would derail things. This is the only mode that sets
+        <code>aria-modal</code>, because it is the only one where it is true.
+      </p>
+      <pre><code><span class="s">new</span> Tour({ steps, interactive: <span class="s">false</span> });</code></pre>
+      <div class="runbar"><button data-run="mode-modal">Run</button></div>
+
+      <h3>Non-blocking</h3>
+      <p>
+        Hints alongside a working app. Nothing is inert, nothing intercepts clicks, and the
+        user can ignore the tour entirely. Weakest focus guarantees &mdash; the trade is
+        deliberate.
+      </p>
+      <pre><code><span class="s">new</span> Tour({ steps, blocking: <span class="s">false</span> });</code></pre>
+      <div class="runbar"><button data-run="mode-open">Run</button></div>
+    </section>
+
+    <section id="async">
+      <h2>Async steps</h2>
+
+      <h3>Waiting for a target</h3>
+      <p>
+        Menus that open, panels that lazy-render, routes that are still loading.
+        <code>waitFor</code> takes milliseconds to wait for the target to appear, or a
+        predicate to poll.
+      </p>
+      <pre><code>{ target: <span class="s">'#invite-panel'</span>, waitFor: <span class="s">3000</span>, title: <span class="s">'Invite your team'</span> }
+
+{ target: <span class="s">'#chart'</span>, waitFor: () =&gt; store.getState().loaded, title: <span class="s">'Your data'</span> }</code></pre>
+      <p>
+        The card is hidden while it waits, so nothing hovers over a half-rendered page.
+        If the target never arrives, <code>onMissingTarget</code> decides: skip the step,
+        show it centred, or throw.
+      </p>
+
+      <h3>Advancing on the real action</h3>
+      <p>
+        The most useful thing in the library. Rather than a Next button, the step completes
+        when the user does the thing.
+      </p>
+      <pre><code>{
+  target: <span class="s">'#search'</span>,
+  title: <span class="s">'Try a search'</span>,
+  focus: <span class="s">'target'</span>,
+  advanceOn: { event: <span class="s">'input'</span>, when: (e) =&gt; e.target.value.length &gt; <span class="s">2</span> },
+}</code></pre>
+      <div class="runbar">
+        <button data-run="advance">Run</button>
+        <span class="hint">Type three characters in the sandbox search field.</span>
+      </div>
+
+      <h3>Setting up before a step</h3>
+      <pre><code>{
+  target: <span class="s">'#settings-panel'</span>,
+  beforeShow: <span class="s">async</span> () =&gt; { router.push(<span class="s">'/settings'</span>); <span class="s">await</span> nextPaint(); },
+  afterHide:  () =&gt; router.back(),
+}</code></pre>
+    </section>
+
+    <section id="buttons">
+      <h2>Buttons and labels</h2>
+      <p>
+        The default row is Back plus Next, with Next becoming Done on the last step.
+        Replace it per step:
+      </p>
+      <pre><code>{
+  target: <span class="s">'#billing'</span>,
+  buttons: [
+    { label: <span class="s">'Not now'</span>, action: <span class="s">'cancel'</span>, variant: <span class="s">'ghost'</span> },
+    { label: <span class="s">'Skip ahead'</span>, action: (tour) =&gt; tour.goTo(<span class="s">'summary'</span>) },
+    { label: <span class="s">'Upgrade'</span>, action: (tour) =&gt; { openBilling(); tour.complete(); }, variant: <span class="s">'primary'</span> },
+  ],
+}</code></pre>
+      <p>
+        <code>action</code> is <code>'next'</code>, <code>'back'</code>,
+        <code>'cancel'</code>, <code>'complete'</code>, or your own function.
+        <code>variant</code> is <code>primary</code>, <code>secondary</code> or
+        <code>ghost</code>. A disabled button gets <code>aria-disabled</code> rather than
+        <code>disabled</code>, so it stays reachable and can still be read.
+      </p>
+      <h3>Every string is yours</h3>
+      <pre><code><span class="s">new</span> Tour({
+  steps,
+  labels: {
+    next: <span class="s">'Weiter'</span>,
+    back: <span class="s">'Zur&uuml;ck'</span>,
+    done: <span class="s">'Fertig'</span>,
+    close: <span class="s">'Tour schlie&szlig;en'</span>,
+    counter: (i, total) =&gt; <span class="s">`Schritt ${i + 1} von ${total}`</span>,
+  },
+});</code></pre>
+      <div class="runbar"><button data-run="labels">Run the German version</button></div>
+    </section>
+
+    <section id="styling">
+      <h2>Styling</h2>
+      <p>
+        Everything is a custom property. Light and dark are both defined out of the box;
+        override either or both.
+      </p>
+      <pre><code>.gp-card {
+  --gp-accent: #0f766e;
+  --gp-surface: #fff;
+  --gp-text: #12171c;
+  --gp-radius: 10px;
+  --gp-card-width: 24rem;
+  --gp-font: 400 15px/1.55 "Inter", system-ui, sans-serif;
+}
+.gp-scrim { --gp-overlay: rgb(0 0 0 / .55); }
+.gp-ring  { --gp-ring-halo: rgb(15 118 110 / .3); }</code></pre>
+      <p>
+        Class hooks, all also exposed as <code>part</code> attributes:
+        <code>.gp-scrim</code>, <code>.gp-ring</code>, <code>.gp-card</code>,
+        <code>.gp-arrow</code>, <code>.gp-counter</code>, <code>.gp-title</code>,
+        <code>.gp-body</code>, <code>.gp-progress</code>, <code>.gp-dot</code>,
+        <code>.gp-actions</code>, <code>.gp-btn</code>, <code>.gp-close</code>.
+      </p>
+      <p>
+        For one-off steps, <code>classes</code> lands on the card, so
+        <code>.gp-card.danger { --gp-accent: #b91c1c; }</code> works.
+      </p>
+      <div class="runbar"><button data-run="themed">Run a restyled tour</button></div>
+    </section>
+
+    <section id="a11y">
+      <h2>Accessibility</h2>
+      <p>What the library guarantees:</p>
+      <ul>
+        <li>Focus moves into the card on open and returns to the triggering element on exit.</li>
+        <li>Everything except the card &mdash; and, in interactive mode, the spotlighted target
+          &mdash; is <code>inert</code>: untabbable, unclickable, and hidden from screen readers.
+          There is no keydown interception and no sentinel nodes.</li>
+        <li>The step counter is part of the card's accessible name, so it reads as
+          <em>&ldquo;Step 2 of 5, Invite your team&rdquo;</em> rather than arriving as a separate
+          interruption. When focus is already inside the card, step changes route through a
+          polite live region instead, so nothing is announced twice.</li>
+        <li>Escape always exits, from anywhere, including while focus is on the target.</li>
+        <li><code>aria-modal</code> is set only in fully blocking mode.</li>
+        <li>Every animation collapses under <code>prefers-reduced-motion</code>.</li>
+      </ul>
+      <div class="note" data-t="warn">
+        <p><strong>What is still yours.</strong> Write step text that makes sense read aloud
+        without the visual spotlight &mdash; &ldquo;the button below&rdquo; means nothing to a
+        screen-reader user. Give every target an accessible name. And if a step teaches a
+        drag interaction, provide a keyboard path to the same outcome.</p>
+        <p>A library cannot make an integration conformant. It can only stop being the
+        reason it is not.</p>
+      </div>
+    </section>
+
+    <section id="support">
+      <h2>Browser support</h2>
+      <div class="readout-wrap">
+        <p>
+          Required, with no fallback: the Popover API, <code>inert</code>, and
+          <code>clip-path: path()</code>. That puts the floor at roughly Chrome 117,
+          Safari 17.5 and Firefox 129.
+        </p>
+        <p>
+          CSS anchor positioning is the one piece that is not everywhere yet
+          (Chrome 125+, Safari 26+, Firefox 147+), and the one piece with a fallback.
+          <code>strategy: 'auto'</code> uses the native tether where it exists and a
+          measured positioner everywhere else &mdash; and it verifies the anchor actually
+          resolved, falling back mid-step if it did not.
+        </p>
+      </div>
+      <pre><code><span class="s">import</span> { supportsAnchorPositioning } <span class="s">from</span> <span class="s">'guidepost'</span>;
+
+supportsAnchorPositioning(); <span class="c">// true on the native path</span></code></pre>
+      <p id="live-support" class="note"></p>
+    </section>
+
+    <section id="recipes">
+      <h2>Recipes</h2>
+
+      <h3>Show it once per user</h3>
+      <pre><code><span class="s">if</span> (!Tour.hasCompleted(<span class="s">'onboarding'</span>)) {
+  <span class="s">new</span> Tour({ id: <span class="s">'onboarding'</span>, remember: <span class="s">true</span>, steps }).start();
+}
+
+<span class="c">// a "replay tour" menu item</span>
+Tour.clearCompleted(<span class="s">'onboarding'</span>);</code></pre>
+
+      <h3>Deep-link a step</h3>
+      <pre><code><span class="s">const</span> step = <span class="s">new</span> URL(location.href).searchParams.get(<span class="s">'tour'</span>);
+<span class="s">if</span> (step) tour.start(step); <span class="c">// start(at) takes a step id</span></code></pre>
+
+      <h3>Clean up on unmount</h3>
+      <pre><code><span class="c">// React</span>
+useEffect(() =&gt; {
+  <span class="s">const</span> tour = <span class="s">new</span> Tour({ steps });
+  tour.start();
+  <span class="s">return</span> () =&gt; tour.destroy();
+}, []);</code></pre>
+      <p>
+        <code>destroy()</code> ends the tour, releases <code>inert</code>, restores the
+        anchor name on the target and removes the DOM. Always call it &mdash; a tour that
+        outlives its page leaves the page inert.
+      </p>
+
+      <h3>Conditional steps</h3>
+      <pre><code>{ target: <span class="s">'#admin-panel'</span>, when: () =&gt; user.isAdmin, title: <span class="s">'Admin tools'</span> }</code></pre>
+      <p>
+        Skipped steps do not count towards the step total, so a five-step tour that skips
+        two reads &ldquo;Step 2 of 3&rdquo; rather than leaving gaps.
+      </p>
+    </section>
+
+    <section id="trouble">
+      <h2>Troubleshooting</h2>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row">Card in the corner</th>
+              <td class="d">The target was removed while the step was open. Give the step a
+                <code>waitFor</code>, or use <code>onMissingTarget: 'center'</code>.</td>
+            </tr>
+            <tr>
+              <th scope="row">Page stays inert</th>
+              <td class="d"><code>destroy()</code> was never called, usually a component that
+                unmounted mid-tour.</td>
+            </tr>
+            <tr>
+              <th scope="row">Target is not clickable</th>
+              <td class="d"><code>interactive: false</code> is set on the tour or the step.</td>
+            </tr>
+            <tr>
+              <th scope="row">Card under a modal</th>
+              <td class="d">The other modal is in the top layer too and opened later.
+                Start the tour after it, or use a <code>beforeShow</code> that closes it.</td>
+            </tr>
+            <tr>
+              <th scope="row">No animation</th>
+              <td class="d">The OS is set to reduce motion, which is working as intended.
+                <code>animate: true</code> overrides it &mdash; think hard before you do.</td>
+            </tr>
+            <tr>
+              <th scope="row">Arrow points at nothing</th>
+              <td class="d">The target moved after the step opened. Call
+                <code>tour.refresh()</code>, or check for a CSS transition on the target.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <p>
+        guidepost v0.1.1 &mdash; MIT. Built on the Popover API, CSS anchor positioning,
+        <code>inert</code> and <code>clip-path</code>. The examples on this page run the
+        published build; the source of each is the code block above its button.
+      </p>
+    </footer>
+
+  </main>
+</div>
+
+<script type="module">
+/*__GUIDEPOST_BUNDLE__*/
+
+const { Tour, supportsAnchorPositioning } = Guidepost;
+
+document.getElementById('live-support').innerHTML = supportsAnchorPositioning()
+  ? '<strong>In this browser:</strong> anchor positioning is supported, so the examples ' +
+    'below use the native tether.'
+  : '<strong>In this browser:</strong> anchor positioning is unavailable, so the examples ' +
+    'below use the measured fallback. Everything else behaves identically.';
+
+const S = {
+  intro: { placement: 'center', title: 'Welcome', text: 'A quick tour. Arrow keys move, Escape leaves.' },
+  rail:  { target: '#sb-carriers', placement: 'right-start', title: 'Navigation', text: 'Everything lives in the sidebar.' },
+  tiles: { target: '#sb-tiles', placement: 'bottom', padding: 8, title: 'Your numbers', text: 'The card resizes and glides between steps.' },
+  neu:   { target: '#sb-new', placement: 'bottom-end', title: 'Create a lane', text: 'Start here when you are ready.' },
+};
+
+const EXAMPLES = {
+  quickstart: { steps: [S.intro, S.rail, S.neu] },
+
+  'place-top':    { steps: [{ ...S.tiles, placement: 'top', title: 'placement: top', text: 'Above the target, centred on it.' }] },
+  'place-right':  { steps: [{ ...S.rail, placement: 'right-start', title: "placement: 'right-start'", text: 'Beside the target, top edges aligned.' }] },
+  'place-bottom': { steps: [{ ...S.neu, placement: 'bottom-end', title: "placement: 'bottom-end'", text: 'Below the target, right edges aligned.' }] },
+  'place-center': { steps: [{ placement: 'center', title: "placement: 'center'", text: 'No target at all. The spotlight closes to nothing.' }] },
+
+  'mode-default': { steps: [{ ...S.rail, title: 'Try clicking Carriers', text: 'The page is inert, but this link still works.' }] },
+  'mode-modal':   { interactive: false, steps: [{ ...S.rail, title: 'Nothing is clickable', text: 'Fully blocking. This is the only mode that sets aria-modal.' }] },
+  'mode-open':    { blocking: false, steps: [{ ...S.rail, title: 'Carry on working', text: 'Nothing is inert. Click anywhere you like.' }] },
+
+  advance: {
+    steps: [{
+      target: '#sb-search', placement: 'bottom-end', focus: 'target',
+      title: 'Type three characters',
+      text: 'The field has focus and the rest of the page is inert. No Next button.',
+      advanceOn: { event: 'input', when: (e) => e.target.value.length > 2 },
+      buttons: [{ label: 'Give up', action: 'cancel', variant: 'ghost' }],
+    }, {
+      placement: 'center', title: 'That is advanceOn', text: 'The step completed because you did the thing.',
+    }],
+  },
+
+  labels: {
+    labels: {
+      next: 'Weiter', back: 'Zur\u00fcck', done: 'Fertig', close: 'Tour schlie\u00dfen',
+      counter: (i, total) => `Schritt ${i + 1} von ${total}`,
+    },
+    steps: [
+      { placement: 'center', title: 'Willkommen', text: 'Jede Zeichenkette ist \u00fcberschreibbar.' },
+      { ...S.rail, title: 'Navigation', text: 'Alles befindet sich in der Seitenleiste.' },
+    ],
+  },
+
+  themed: {
+    steps: [
+      { ...S.intro, classes: 'demo-themed', title: 'One class name', text: 'Every colour here is a custom property on .gp-card.' },
+      { ...S.tiles, classes: 'demo-themed' },
+    ],
+  },
+};
+
+// Per-step theming for the styling example.
+const themed = document.createElement('style');
+themed.textContent = `
+  .gp-card.demo-themed {
+    --gp-accent: #b45309; --gp-accent-hover: #92400e;
+    --gp-radius: 2px; --gp-card-width: 20rem;
+    --gp-font: 400 15px/1.5 "Newsreader", Georgia, serif;
+  }
+  .gp-card.demo-themed .gp-title { font-size: 1.25rem; font-weight: 500; }
+  .gp-card.demo-themed ~ .gp-ring, .gp-root:has(.demo-themed) .gp-ring {
+    --gp-ring-halo: rgb(180 83 9 / .35);
+  }
+`;
+document.head.appendChild(themed);
+
+let active = null;
+
+function run(name) {
+  const config = EXAMPLES[name];
+  if (!config) return;
+  active?.destroy();
+
+  // Make sure the sandbox is on screen before the tour starts, so the first
+  // step never has to scroll.
+  document.getElementById('sandbox').scrollIntoView({ block: 'center', behavior: 'smooth' });
+
+  setTimeout(() => {
+    active = new Tour({ id: 'docs-' + name, ...config });
+    active.start();
+  }, 420);
+}
+
+for (const button of document.querySelectorAll('[data-run]')) {
+  button.addEventListener('click', () => run(button.dataset.run));
+}
+
+window.__docsRun = run;
+</script>
