@@ -36,15 +36,23 @@ if (branch !== 'main') {
   process.exit(1);
 }
 
-step('Checking npm auth');
-let whoami;
+// CI does the publishing, so what matters here is that CI holds a token —
+// not whether this machine is logged in.
+step('Checking CI publish credentials');
 try {
-  whoami = run('npm', ['whoami'], { stdio: ['ignore', 'pipe', 'pipe'] }).trim();
-} catch {
-  console.error('Not logged in to npm. Run `npm login` first.');
+  const secrets = run('gh', ['secret', 'list', '--json', 'name'], { stdio: ['ignore', 'pipe', 'pipe'] });
+  if (!JSON.parse(secrets).some((s) => s.name === 'NPM_TOKEN')) {
+    console.error('No NPM_TOKEN secret on the repo, so CI cannot publish.');
+    console.error('Create a granular token at https://www.npmjs.com/settings/cmunns/tokens');
+    console.error('then: gh secret set NPM_TOKEN');
+    process.exit(1);
+  }
+  console.log('  NPM_TOKEN present');
+} catch (err) {
+  if (err.status === 1 && !err.stdout) throw err;
+  console.error('Could not read repo secrets. Is `gh` authenticated?');
   process.exit(1);
 }
-console.log(`  authenticated as ${whoami}`);
 
 step('Type checking');
 run('npm', ['run', 'typecheck'], { stdio: 'inherit' });
@@ -79,18 +87,21 @@ if (dryRun) {
 }
 
 // ---- release ---------------------------------------------------------------
+// Version, tag, push. Publishing happens in CI, triggered by the pushed tag:
+// this account requires 2FA on writes, so `npm publish` from a script would
+// try to open a browser and fail. The tag is pushed before anything can go
+// wrong locally, so a failure never leaves a tag stranded on this machine.
 step(`Bumping version (${bump})`);
 // `npm version` writes package.json, commits, and creates the tag.
 const tag = run('npm', ['version', bump, '-m', 'Release %s']).trim();
 console.log(`  ${tag}`);
 
-step('Publishing to npm');
-run('npm', ['publish'], { stdio: 'inherit' });
-
 step('Pushing to GitHub');
 run('git', ['push', '--follow-tags'], { stdio: 'inherit' });
 
 const { name, version } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
-console.log(`\n\x1b[32m✓ Released ${name}@${version}\x1b[0m`);
+console.log(`\n\x1b[32m✓ Tagged ${name}@${version} and pushed.\x1b[0m`);
+console.log('  CI is now publishing to npm. Watch it with:');
+console.log('    gh run watch $(gh run list --workflow=Release --limit 1 --json databaseId -q \'.[0].databaseId\')');
 console.log(`  npm     https://www.npmjs.com/package/${name}`);
 console.log(`  install npm i ${name}@${version}`);

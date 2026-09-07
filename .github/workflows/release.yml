@@ -2,10 +2,16 @@ name: Release
 
 # Publishes to npm when a version tag is pushed. `npm run release` creates and
 # pushes that tag, so the local command and this workflow are two halves of one
-# flow rather than competing paths.
+# flow. Publishing lives here rather than on a laptop because the npm account
+# requires 2FA on writes, which a granular token satisfies non-interactively.
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to publish (e.g. v0.1.5)'
+        required: true
 
 permissions:
   contents: write
@@ -16,6 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -25,8 +34,20 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run build
+      - run: npm run size
       - run: npx playwright install --with-deps chromium
       - run: npm test
+
+      # Fail with a clear message rather than a 404 from the registry.
+      - name: Check publish credentials
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NPM_TOKEN secret is not set. Create a granular token on npmjs.com and run: gh secret set NPM_TOKEN"
+            exit 1
+          fi
+          npm whoami
 
       - name: Publish
         run: npm publish --provenance --access public
@@ -34,6 +55,6 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub release
-        run: gh release create "$GITHUB_REF_NAME" --generate-notes
+        run: gh release create "${{ github.event.inputs.tag || github.ref_name }}" --generate-notes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
