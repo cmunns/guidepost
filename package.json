@@ -62,7 +62,8 @@
     "build:sites": "npm run build && npm run build --workspace=demo && npm run build --workspace=docs",
     "release": "node scripts/release.mjs",
     "vercel-build:demo": "npm run build && npm run build --workspace=demo",
-    "vercel-build:docs": "npm run build && npm run build --workspace=docs"
+    "vercel-build:docs": "npm run build && npm run build --workspace=docs",
+    "check:domains": "node scripts/check-domains.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.0",

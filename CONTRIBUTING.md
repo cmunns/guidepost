@@ -86,3 +86,25 @@ tag. Nothing needs to be reset locally.
 Both Vercel projects build from the repo root (no root-directory setting) using
 `vercel-build:demo` / `vercel-build:docs`, which build the library first and then
 the site. Pushes to `main` deploy to production; pull requests get preview URLs.
+
+### Domains
+
+`guidepost.live` serves the demo; `docs.guidepost.live` serves the docs. Both
+are attached to their Vercel projects and the domain is verified, but DNS is
+managed at the registrar, which needs these records:
+
+| Type | Name | Value |
+| --- | --- | --- |
+| A | `@` | `76.76.21.21` |
+| CNAME | `www` | `cname.vercel-dns.com` |
+| CNAME | `docs` | `cname.vercel-dns.com` |
+
+Vercel issues certificates automatically once the records resolve. Check
+progress with:
+
+```bash
+npm run check:domains
+```
+
+The `.vercel.app` URLs keep working regardless, so a DNS problem never takes
+the sites down.
