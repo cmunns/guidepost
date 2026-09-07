@@ -4,7 +4,7 @@ Everything runs from the repo root. The library lives in `src/`; the two
 public sites are npm workspaces under `sites/`.
 
 ```
-src/            the library — the only thing that gets published
+src/            the library, the only thing that gets published
 sites/demo/     the demo app (Vite)      → guidepost.live
 sites/docs/     the docs site (Starlight) → docs.guidepost.live
 scripts/        build, release, and size tooling
@@ -33,14 +33,14 @@ npm install     # installs the root package and both site workspaces
 
 The demo imports the library by package name (`@cmunns/guidepost`), aliased in
 `sites/demo/vite.config.js` to the local `dist/`. So it exercises the same entry
-point a real consumer would, with no `npm link` step — but it does need
-`npm run build` to have run at least once.
+point a real consumer would, no `npm link` needed. You do have to run
+`npm run build` at least once first, though.
 
 ## Docs
 
 Pages are Markdown/MDX in `sites/docs/src/content/docs/`. The sidebar is
-declared in `sites/docs/astro.config.mjs` — a new page needs an entry there or
-it will not appear in navigation. Search (Pagefind) and the sitemap are
+declared in `sites/docs/astro.config.mjs`. A new page needs an entry there or it
+won't show up in the nav. Search (Pagefind) and the sitemap are
 generated at build time; nothing to maintain.
 
 Theme colours are ported from the original hand-authored docs page into
@@ -66,8 +66,8 @@ and cuts a GitHub release.
 ### One-time setup
 
 Create a **granular access token** at
-https://www.npmjs.com/settings/cmunns/tokens — scoped to `@cmunns/guidepost`,
-with read and write, and 2FA bypass enabled so automation can use it. Then:
+https://www.npmjs.com/settings/cmunns/tokens. Scope it to `@cmunns/guidepost`,
+give it read and write, and turn on the 2FA bypass so automation can use it. Then:
 
 ```bash
 gh secret set NPM_TOKEN

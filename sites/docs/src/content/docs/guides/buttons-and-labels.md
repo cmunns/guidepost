@@ -1,10 +1,10 @@
 ---
 title: Buttons and labels
-description: Replace the default button row per step, and override every string the card renders.
+description: Swap out the default button row per step, and override every string the card renders.
 ---
 
-The default row is Back plus Next, with Next becoming Done on the last step.
-Replace it per step:
+By default you get Back plus Next, and Next turns into Done on the last step.
+Swap that out per step:
 
 ```js
 {
@@ -20,8 +20,8 @@ Replace it per step:
 `action` is `'next'`, `'back'`,
 `'cancel'`, `'complete'`, or your own function.
 `variant` is `primary`, `secondary` or
-`ghost`. A disabled button gets `aria-disabled` rather than
-`disabled`, so it stays reachable and can still be read.
+`ghost`. A disabled button gets `aria-disabled` and not the real
+`disabled` attribute, so it stays reachable and screen readers can still read it.
 
 ## Every string is yours
 
@@ -38,6 +38,5 @@ new Tour({
 });
 ```
 
-A German-language tour is among the live examples at
+There's a German-language tour in the live examples at
 [the live demo](https://guidepost.live).
-</content>

@@ -1,6 +1,6 @@
 ---
 title: Quick start
-description: A tour is an array of steps and a call to start(). That is the whole minimum.
+description: An array of steps, a call to start(), and you're done.
 ---
 
 A tour is an array of steps and a call to `start()`.
@@ -19,10 +19,9 @@ const tour = new Tour({
 tour.start();
 ```
 
-That is the whole minimum. Focus moves into the card, the rest of the page goes
-inert, Escape exits, arrow keys move between steps, and the spotlighted element
+That's the whole thing. Focus jumps into the card, the rest of the page goes
+inert, Escape gets you out, arrow keys move around, and the highlighted element
 stays clickable.
 
-You can try this tour, and every other example in these docs, at
+You can play with this tour, and every other example in these docs, over at
 [the live demo](https://guidepost.live).
-</content>

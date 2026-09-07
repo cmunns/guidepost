@@ -1,10 +1,10 @@
 ---
 title: Styling
-description: Everything is a custom property. Light and dark are both defined out of the box — override either or both.
+description: Everything's a custom property. Light and dark both work out of the box, so override whichever you want.
 ---
 
-Everything is a custom property. Light and dark are both defined out of the box;
-override either or both.
+Everything's a custom property. Light and dark are both defined out of the box,
+so override one or both.
 
 ```css
 .gp-card {
@@ -19,14 +19,13 @@ override either or both.
 .gp-ring  { --gp-ring-halo: rgb(15 118 110 / .3); }
 ```
 
-Class hooks, all also exposed as `part` attributes:
+Class hooks, all of them also exposed as `part` attributes:
 `.gp-scrim`, `.gp-ring`, `.gp-card`,
 `.gp-arrow`, `.gp-counter`, `.gp-title`,
 `.gp-body`, `.gp-progress`, `.gp-dot`,
 `.gp-actions`, `.gp-btn`, `.gp-close`.
 
-For one-off steps, `classes` lands on the card, so
-`.gp-card.danger { --gp-accent: #b91c1c; }` works.
+Got a one-off step? `classes` lands on the card, so
+`.gp-card.danger { --gp-accent: #b91c1c; }` does what you'd expect.
 
-A restyled tour is running at [the live demo](https://guidepost.live).
-</content>
+There's a restyled tour running at [the live demo](https://guidepost.live).

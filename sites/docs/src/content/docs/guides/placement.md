@@ -1,6 +1,6 @@
 ---
 title: Placement
-description: Four sides with optional alignment, plus center for a card with no target at all — and what happens when the card will not fit.
+description: Four sides with optional alignment, plus center for a card with no target, and what happens when the card doesn't fit.
 ---
 
 Four sides, each with an optional alignment:
@@ -8,11 +8,10 @@ Four sides, each with an optional alignment:
 any of them suffixed `-start`, `-center` or `-end`,
 plus `center` for a card with no target at all.
 
-You are stating a preference, not a coordinate. When the card will not fit, the
-browser's `position-try-fallbacks` flips it — or, on the JS path,
-your `fallbackPlacements` are tried in order and the card is clamped
-into the viewport. The arrow is measured after the fact, so it always agrees with
-where the card actually ended up.
+You're stating a preference here, not a coordinate. When the card doesn't fit,
+the browser's `position-try-fallbacks` flips it. On the JS path, your
+`fallbackPlacements` get tried in order and the card gets clamped into the
+viewport. The arrow is measured afterward, so it always agrees with where the
+card actually landed.
 
 Each placement is demonstrated live at [the live demo](https://guidepost.live).
-</content>

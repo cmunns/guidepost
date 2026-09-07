@@ -1,10 +1,10 @@
 # Guidepost
 
-Accessible product tours built on native browser primitives. No positioning
-library, no portals, no z-index war, no hand-rolled focus trap.
+Accessible product tours built on stuff your browser already has. No positioning
+library. No portals. No z-index war. No hand-rolled focus trap.
 
-**MIT licensed.** 9.4 kB minified + gzipped, stylesheet included. Zero runtime
-dependencies.
+**MIT licensed.** 9.4 kB minified + gzipped with the stylesheet included, and
+zero runtime dependencies.
 
 [**Live demo**](https://guidepost.live) · [**Documentation**](https://docs.guidepost.live)
 
@@ -32,29 +32,29 @@ tour.start();
 
 ## Why this exists
 
-Shepherd.js is dual-licensed AGPL-3.0 / commercial — a paid licence is required
-if your organisation generates revenue, including for internal tools. Intro.js
-uses the same model. That is a fine business, but it is a licence decision, not
-a technical one, and the technical work it was hiding has mostly moved into the
-browser.
+Shepherd.js is dual-licensed AGPL-3.0 / commercial, so you need a paid licence
+if your company makes money, even for internal tools. Intro.js works the same way.
+Nothing wrong with running a business like that. But it's a licensing call, and
+most of the hard technical work those libraries were doing has quietly moved into
+the browser.
 
-What used to require a library:
+Here's what used to need a library:
 
 | Job | Then | Now |
 | --- | --- | --- |
-| Render above everything | z-index escalation, portals, `overflow: hidden` escapes | **Popover API** — top layer |
-| Tether a card to an element | Popper / Floating UI + scroll & resize listeners | **CSS anchor positioning** — the browser keeps it attached |
-| Dim the page with a hole in it | Four positioned divs framing the target | **`clip-path`** — one element, and the hole is click-through for free |
-| Contain focus | Sentinel nodes, `keydown` interception, `aria-hidden` sweeps | **`inert`** — untabbable, unclickable, and hidden from screen readers |
+| Render above everything | z-index escalation, portals, `overflow: hidden` escapes | **Popover API**, top layer |
+| Tether a card to an element | Popper / Floating UI + scroll & resize listeners | **CSS anchor positioning**, browser keeps it attached |
+| Dim the page with a hole in it | Four positioned divs framing the target | **`clip-path`**, one element and the hole is click-through for free |
+| Contain focus | Sentinel nodes, `keydown` interception, `aria-hidden` sweeps | **`inert`**, untabbable and unclickable and hidden from screen readers |
 | Animate a top-layer element out | `setTimeout` matched to the CSS duration | **`@starting-style`** + `transition-behavior: allow-discrete` |
 
-What is left — the step machine and the accessibility contract — is what this
-package is.
+What's left over is the step machine and the accessibility contract. That's what
+this package is.
 
 ## How it compares
 
-Measured from each library's published bundle rather than its documentation.
-Own bundle, minified and gzipped, with any shipped stylesheet included.
+These numbers come from each library's published bundle, not its docs. Own bundle,
+minified and gzipped, with any stylesheet it ships included.
 
 | Library | Own bundle | Deps | Licence | `inert` | `aria-live` | Reduced motion |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -71,7 +71,7 @@ spotlighting. Guidepost's 1.5 kB buys the focus contract: `inert` containment,
 a live region for step changes, and an animation that stops when the user has
 asked for less motion.
 
-Reproduce the table yourself — no numbers here come from anyone's marketing:
+Run the numbers yourself. Nothing here came from anyone's marketing copy:
 
 ```bash
 npm i --no-save driver.js shepherd.js intro.js react-joyride @reactour/tour tourguidejs
@@ -88,8 +88,8 @@ containing a clockwise outer rectangle and a counter-clockwise rounded-rect
 hole. Two things fall out of that:
 
 - Clipping affects hit testing, so the hole passes clicks through to the real
-  element underneath. That is what makes an *interactive* tour possible —
-  users can complete the action the step is describing.
+  element underneath. That's what makes an *interactive* tour work at all, since
+  users can actually do the thing the step is describing.
 - Every path this library emits uses an identical command sequence, including
   the targetless case (a zero-size hole), so `clip-path` interpolates and the
   spotlight glides between steps as a plain CSS transition.
@@ -106,19 +106,18 @@ resizes via the Web Animations API while the content cross-fades, so a step
 change reads as one object moving. View Transitions would be the obvious tool,
 but they do not compose reliably with top-layer elements yet; FLIP gets the
 same result with no caveats. The animation targets `transform`, not
-`translate` — the card's resting position lives in `translate` (a percentage,
-for centred steps), and `transform` composes on top of it rather than fighting
-a CSS transition over the same property.
+`translate`. The card's resting position lives in `translate` (a percentage, for
+centred steps), so `transform` composes on top of it instead of fighting a CSS
+transition over the same property.
 
 **Nothing intermediate is ever on screen.** A step change fades the card's
 content out *before* any async work begins, and the anchor stays attached to
-the outgoing target until the incoming one is ready — an unanchored fixed
-element with `inset: auto` lays out in the viewport corner, and that would be
-visible for every frame of a `beforeShow` promise or a smooth scroll. When the
-change involves work that outlasts a frame — a scroll, a `waitFor`, an async
-`beforeShow` — the shell fades too, so the card is never left hovering over a
-page that is moving underneath it, and it fades back in at its new home instead
-of flying across the viewport.
+the outgoing target until the incoming one is ready. An unanchored fixed element
+with `inset: auto` lays out in the viewport corner, and you'd see that for every
+frame of a `beforeShow` promise or a smooth scroll. When the change involves work
+that outlasts a frame (a scroll, a `waitFor`, an async `beforeShow`) the shell
+fades too, so the card never hovers over a page moving underneath it. It fades
+back in at its new home instead of flying across the viewport.
 
 **Scrolling only when scrolling is needed.** A target that is already fully
 visible does not move the page. Re-centring something the user can already see
@@ -126,18 +125,18 @@ is the single most common way a tour feels janky.
 
 **Announcements do not double up.** Moving focus into the card announces its
 name and description. When the user clicks *Next*, focus is already inside, so
-that announcement will not fire again — those step changes are routed through a
-polite live region instead. The step counter is part of the card's
-`aria-labelledby`, so it reads as *"Step 2 of 5, Invite your team"* rather than
-arriving as a separate interruption.
+that announcement won't fire again, so those step changes go through a polite
+live region instead. The step counter is part of the card's `aria-labelledby`, so
+it reads as *"Step 2 of 5, Invite your team"* in one go instead of interrupting
+separately.
 
 ## Browser support
 
 | Feature | Chrome | Safari | Firefox | Fallback |
 | --- | --- | --- | --- | --- |
-| Popover API | 114+ | 17+ | 125+ | none — required |
-| `inert` | 102+ | 15.5+ | 112+ | none — required |
-| `clip-path: path()` | 88+ | 13.1+ | 97+ | none — required |
+| Popover API | 114+ | 17+ | 125+ | none, required |
+| `inert` | 102+ | 15.5+ | 112+ | none, required |
+| `clip-path: path()` | 88+ | 13.1+ | 97+ | none, required |
 | `@starting-style` | 117+ | 17.5+ | 129+ | animation degrades, layout unaffected |
 | CSS anchor positioning | 125+ | 26+ | 147+ | **measured JS positioning** |
 
@@ -156,8 +155,8 @@ Safari 17.5+, Firefox 129+.
 
 | Option | Type | Default | |
 | --- | --- | --- | --- |
-| `steps` | `TourStep[]` | — | required |
-| `id` | `string` | — | used by `remember` |
+| `steps` | `TourStep[]` | none | required |
+| `id` | `string` | none | used by `remember` |
 | `blocking` | `boolean` | `true` | apply `inert` to the rest of the page |
 | `interactive` | `boolean` | `true` | keep the spotlighted element usable |
 | `placement` | `Placement` | `'bottom'` | default for all steps |
@@ -211,7 +210,7 @@ Callbacks: `onStart`, `onShow(tour, step, index)`, `onComplete`, `onCancel`,
 | Key | |
 | --- | --- |
 | `Escape` | cancel (anywhere, including while focus is on the target) |
-| `→` / `←` | next / back — only when focus is in the card and not in a field |
+| `→` / `←` | next / back, only when focus is in the card and not in a field |
 | `Home` / `End` | first / last step |
 | `Tab` | cycles the card, plus the target in interactive mode |
 

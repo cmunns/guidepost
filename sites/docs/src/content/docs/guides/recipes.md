@@ -33,8 +33,8 @@ useEffect(() => {
 ```
 
 `destroy()` ends the tour, releases `inert`, restores the
-anchor name on the target and removes the DOM. Always call it — a tour that
-outlives its page leaves the page inert.
+anchor name on the target and rips out the DOM. Always call it. A tour that
+outlives its page will leave the page inert, and that's a bad afternoon.
 
 ## Conditional steps
 
@@ -42,6 +42,5 @@ outlives its page leaves the page inert.
 { target: '#admin-panel', when: () => user.isAdmin, title: 'Admin tools' }
 ```
 
-Skipped steps do not count towards the step total, so a five-step tour that skips
-two reads "Step 2 of 3" rather than leaving gaps.
-</content>
+Skipped steps don't count towards the total, so a five-step tour that skips two
+reads "Step 2 of 3" and you don't get weird gaps in the numbering.

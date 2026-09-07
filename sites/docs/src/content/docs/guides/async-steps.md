@@ -1,12 +1,12 @@
 ---
 title: Async steps
-description: Waiting for a target, advancing on the real user action, and setting up before a step runs.
+description: Waiting for a target, advancing on the real user action, and doing setup before a step runs.
 ---
 
 ## Waiting for a target
 
 Menus that open, panels that lazy-render, routes that are still loading.
-`waitFor` takes milliseconds to wait for the target to appear, or a
+`waitFor` takes milliseconds to wait for the target to show up, or a
 predicate to poll.
 
 ```js
@@ -15,14 +15,14 @@ predicate to poll.
 { target: '#chart', waitFor: () => store.getState().loaded, title: 'Your data' }
 ```
 
-The card is hidden while it waits, so nothing hovers over a half-rendered page.
-If the target never arrives, `onMissingTarget` decides: skip the step,
-show it centred, or throw.
+The card stays hidden while it waits, so nothing hovers over a half-rendered
+page. If the target never shows up, `onMissingTarget` decides what happens: skip
+the step, show it centred, or throw.
 
 ## Advancing on the real action
 
-The most useful thing in the library. Rather than a Next button, the step completes
-when the user does the thing.
+Probably the most useful thing in the library. Skip the Next button and let the
+step complete when the user does the thing.
 
 ```js
 {
@@ -33,8 +33,9 @@ when the user does the thing.
 }
 ```
 
-There is a working `advanceOn` example — type three characters and the step
-completes — at [the live demo](https://guidepost.live).
+There's a working `advanceOn` example over at
+[the live demo](https://guidepost.live). Type three characters and the step
+completes.
 
 ## Setting up before a step
 
@@ -45,4 +46,3 @@ completes — at [the live demo](https://guidepost.live).
   afterHide:  () => router.back(),
 }
 ```
-</content>

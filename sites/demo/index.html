@@ -377,8 +377,8 @@
         <span class="tagline"><b>9.4 kB</b> and no positioning engine</span>
         <h1>The browser does the hard parts now</h1>
         <p class="sub">
-          No Floating UI, no z-index wars, no hand-rolled focus trap. Guidepost is the
-          glue between the bits your browser already ships.
+          Your browser already ships everything a product tour needs. Guidepost is the
+          little bit of glue that wires it together.
         </p>
         <div class="hero-actions">
           <button class="btn btn-primary" id="run">
@@ -423,7 +423,7 @@
       <button class="tab" role="tab" aria-selected="false" data-mode="open">Non-blocking</button>
     </div>
     <p class="tab-note" id="tab-note">
-      Page goes inert, but the highlighted element stays clickable. Pick a mode, then run the tour.
+      Page goes inert, but you can still click the highlighted thing. Pick a mode, then run the tour.
     </p>
   </section>
 
@@ -432,8 +432,8 @@
       <div>
         <h2>Five things you used to write yourself</h2>
         <p>
-          Every layer of this tour is a browser feature. Here is what yours has,
-          checked when the page loaded.
+          Every layer of this tour is just a browser feature now. Here's what your
+          browser's got, checked when the page loaded.
         </p>
         <a class="btn btn-on-dark" href="#how">Read the detail</a>
       </div>
@@ -451,17 +451,17 @@
         <summary>Why is there no z-index?
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 8l5 5 5-5" stroke="#292827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </summary>
-        <p>The card is a <code>popover</code>, so it sits in the top layer. Nothing on your
-        page can cover it and no parent with <code>overflow: hidden</code> can clip it.</p>
+        <p>The card is a <code>popover</code>, so it lives in the top layer. Nothing on your
+        page can cover it, and no parent with <code>overflow: hidden</code> can clip it.</p>
       </details>
 
       <details>
         <summary>How does the card stay glued to things?
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 8l5 5 5-5" stroke="#292827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </summary>
-        <p>CSS anchor positioning. The browser keeps it attached through scroll and resize,
-        so there is no Floating UI and no scroll listener. Older browsers get a measured
-        fallback instead, which is what the JS fallback tab switches on.</p>
+        <p>CSS anchor positioning. The browser keeps it stuck there through scroll and resize,
+        so you don't need Floating UI or a scroll listener. Older browsers fall back to
+        measuring, which is what the JS fallback tab turns on.</p>
       </details>
 
       <details>
@@ -469,17 +469,17 @@
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 8l5 5 5-5" stroke="#292827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </summary>
         <p>The dim is one element with a hole cut in it by <code>clip-path</code>. Clipping
-        affects hit testing, so clicks fall straight through the hole. No stack of four divs
-        framing the target.</p>
+        affects hit testing too, so your clicks fall right through the hole. No stack of
+        four divs boxing in the target.</p>
       </details>
 
       <details>
         <summary>What stops Tab escaping the tour?
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 8l5 5 5-5" stroke="#292827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </summary>
-        <p><code>inert</code>. Everything except the card and the highlighted element is
-        marked inert, which also hides it from screen readers. No keydown interception, no
-        hidden sentinel nodes.</p>
+        <p><code>inert</code> does it. Everything except the card and the highlighted element
+        gets marked inert, which also hides it from screen readers. No intercepting keydowns,
+        no sneaky sentinel nodes.</p>
       </details>
 
       <details>
@@ -487,7 +487,7 @@
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 8l5 5 5-5" stroke="#292827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </summary>
         <p><code>@starting-style</code> plus <code>transition-behavior: allow-discrete</code>.
-        The card animates in and out on its own, so nothing vanishes halfway through a fade.</p>
+        The card animates itself in and out, so nothing pops out of existence mid-fade.</p>
       </details>
 
     </div>
@@ -563,7 +563,7 @@ for (const [name, role, ok] of caps) {
 
 document.getElementById('support-note').textContent = anchorOK
   ? 'Anchor positioning is on, so the tour uses the native tether.'
-  : 'No anchor positioning here, so the tour measures instead.';
+  : 'No anchor positioning here, so the tour falls back to measuring.';
 
 /* ---- the sandbox app actually works ----
    Buttons, not links: an <a href="#..."> here would jump the page instead of
@@ -639,9 +639,9 @@ render('overview');
 /* ---- mode tabs ---- */
 
 const NOTES = {
-  default: 'Page goes inert, but the highlighted element stays clickable. Pick a mode, then run the tour.',
-  js: 'Forces the measured fallback, the same path older browsers take. Same result, more work.',
-  open: 'Nothing is inert and nothing intercepts clicks. Carry on using the app while the tour runs.',
+  default: 'Page goes inert, but you can still click the highlighted thing. Pick a mode, then run the tour.',
+  js: 'Forces the measured fallback, same path older browsers take. Same result, just more work.',
+  open: 'Nothing goes inert, nothing swallows your clicks. Keep using the app while the tour runs.',
 };
 const MODES = { default: {}, js: { strategy: 'js' }, open: { blocking: false } };
 
@@ -662,7 +662,7 @@ const steps = [
     id: 'intro',
     placement: 'center',
     title: 'Quick tour',
-    text: 'Six steps. Arrow keys move, Escape gets you out.',
+    text: 'Six steps. Arrow keys move you around, Escape bails.',
   },
   {
     id: 'primitives',
@@ -670,15 +670,15 @@ const steps = [
     placement: 'left',
     title: anchorOK ? 'Glued by CSS' : 'Glued by math',
     text: anchorOK
-      ? 'Your browser has anchor positioning, so the card is stuck to this list by CSS. Nothing is listening to scroll.'
-      : 'Your browser has no anchor positioning, so the card is placed by measurement.',
+      ? 'Your browser does anchor positioning, so CSS is what pins this card to the list. Nothing is listening to scroll.'
+      : 'No anchor positioning in this browser, so the card gets placed by measuring.',
   },
   {
     id: 'rail',
     target: '#nav-carriers',
     placement: 'right-start',
     title: 'Still clickable',
-    text: 'The dim has a hole cut in it, and clicks fall through it. Click Carriers and the panel switches.',
+    text: 'The dim has a hole in it and clicks fall right through. Go ahead, hit Carriers and watch the panel switch.',
   },
   {
     id: 'tiles',
@@ -686,7 +686,7 @@ const steps = [
     placement: 'bottom',
     padding: 8,
     title: 'Watch it move',
-    text: 'The card slides and resizes between steps instead of popping in and out.',
+    text: 'The card slides and resizes between steps. No popping in and out.',
   },
   {
     id: 'search',
@@ -694,7 +694,7 @@ const steps = [
     placement: 'bottom-end',
     focus: 'target',
     title: 'Type something',
-    text: 'Three characters and it moves on. No Next button, and the rest of the page is inert.',
+    text: 'Three characters and it moves on by itself. No Next button, and the rest of the page is inert.',
     advanceOn: { event: 'input', when: (e) => e.target.value.length > 2 },
     buttons: [
       { label: 'Back', action: 'back', variant: 'secondary' },
@@ -706,7 +706,7 @@ const steps = [
     target: '#run',
     placement: 'bottom-start',
     title: "That's it",
-    text: 'Everything you just saw is built into the browser. The library is the glue.',
+    text: 'Everything you just saw is built into your browser already. Guidepost is the glue.',
   },
 ];
 
