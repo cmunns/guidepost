@@ -1,7 +1,7 @@
 {
   "name": "@cmunns/guidepost",
-  "version": "0.1.4",
-  "description": "Accessible product tours built on native browser primitives \u2014 Popover API, CSS anchor positioning, and animated clip-path spotlights. No positioning dependency.",
+  "version": "0.1.5",
+  "description": "Accessible product tours built on native browser primitives — Popover API, CSS anchor positioning, and animated clip-path spotlights. No positioning dependency.",
   "type": "module",
   "license": "MIT",
   "author": "cmunns",
