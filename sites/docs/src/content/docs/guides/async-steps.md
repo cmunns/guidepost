@@ -34,7 +34,7 @@ when the user does the thing.
 ```
 
 There is a working `advanceOn` example — type three characters and the step
-completes — at [the live demo](https://guidepost-demo.vercel.app).
+completes — at [the live demo](https://guidepost.live).
 
 ## Setting up before a step
 

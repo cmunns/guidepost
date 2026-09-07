@@ -3,8 +3,8 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
-  // Feeds canonical URLs and the sitemap. Change this when a custom domain is added.
-  site: 'https://guidepost-docs.vercel.app',
+  // Feeds canonical URLs and the sitemap.
+  site: 'https://docs.guidepost.live',
   integrations: [
     starlight({
       title: 'Guidepost',

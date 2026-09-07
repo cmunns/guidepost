@@ -6,6 +6,8 @@ library, no portals, no z-index war, no hand-rolled focus trap.
 **MIT licensed.** 9.4 kB minified + gzipped, stylesheet included. Zero runtime
 dependencies.
 
+[**Live demo**](https://guidepost.live) · [**Documentation**](https://docs.guidepost.live)
+
 ```bash
 npm install @cmunns/guidepost
 ```
@@ -240,7 +242,7 @@ npm install
 npm run build      # dist/ (esm + cjs + d.ts + guidepost.css)
 npm run typecheck
 npm test           # Playwright, real Chromium
-npx http-server . && open demo/index.html
+npm run dev:demo   # demo at 127.0.0.1:5173
 ```
 
 The test suite drives a real browser and asserts the things that are easy to

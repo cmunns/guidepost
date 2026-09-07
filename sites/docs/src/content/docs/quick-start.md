@@ -24,5 +24,5 @@ inert, Escape exits, arrow keys move between steps, and the spotlighted element
 stays clickable.
 
 You can try this tour, and every other example in these docs, at
-[the live demo](https://guidepost-demo.vercel.app).
+[the live demo](https://guidepost.live).
 </content>

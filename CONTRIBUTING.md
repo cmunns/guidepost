@@ -5,8 +5,8 @@ public sites are npm workspaces under `sites/`.
 
 ```
 src/            the library — the only thing that gets published
-sites/demo/     the demo app (Vite)      → guidepost-demo.vercel.app
-sites/docs/     the docs site (Starlight) → guidepost-docs.vercel.app
+sites/demo/     the demo app (Vite)      → guidepost.live
+sites/docs/     the docs site (Starlight) → docs.guidepost.live
 scripts/        build, release, and size tooling
 test/           Playwright tests, run against the built demo
 artifact/       the original self-contained Claude Desktop pages (kept for reference)

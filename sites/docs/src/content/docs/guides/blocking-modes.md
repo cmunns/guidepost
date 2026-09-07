@@ -35,5 +35,5 @@ deliberate.
 new Tour({ steps, blocking: false });
 ```
 
-All three modes are running side by side at [the live demo](https://guidepost-demo.vercel.app).
+All three modes are running side by side at [the live demo](https://guidepost.live).
 </content>

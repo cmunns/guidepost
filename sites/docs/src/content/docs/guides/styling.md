@@ -28,5 +28,5 @@ Class hooks, all also exposed as `part` attributes:
 For one-off steps, `classes` lands on the card, so
 `.gp-card.danger { --gp-accent: #b91c1c; }` works.
 
-A restyled tour is running at [the live demo](https://guidepost-demo.vercel.app).
+A restyled tour is running at [the live demo](https://guidepost.live).
 </content>
