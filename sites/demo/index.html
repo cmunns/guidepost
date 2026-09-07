@@ -1,192 +1,700 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Guidepost — demo</title>
+<title>Guidepost</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap">
+
 <style>
   :root {
-    color-scheme: light dark;
-    --bg: #f6f7f9;
-    --panel: #ffffff;
-    --line: #e4e6ec;
-    --ink: #14161c;
-    --muted: #6b7180;
-    --accent: #4f46e5;
-    --radius: 12px;
+    color-scheme: light;
+
+    --color-midnight-wine: #421d24;
+    --color-wine-hover: #57262f;
+    --color-royal-violet: #714cb6;
+    --color-lilac-mist: #d4c7ff;
+    --color-deep-lagoon: #0c4243;
+    --color-ink-charcoal: #292827;
+    --color-stone-gray: #666666;
+    --color-soft-mist: #e3e3e2;
+    --color-warm-parchment: #f2f0eb;
+    --color-paper-white: #ffffff;
+
+    --font-sans: 'Super Sans VF', 'Inter', ui-sans-serif, system-ui, -apple-system,
+      BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    --w-460: 460;
+    --w-500: 500;
+    --w-540: 540;
+    --w-700: 700;
+
+    --radius-tabs: 8px;
+    --radius-cards: 16px;
+    --radius-pills: 999px;
+
+    --shadow-subtle: rgb(113, 76, 182) 0px 0px 0px 1px inset;
+
+    --page-max-width: 1200px;
+    --section-gap: clamp(64px, 8vw, 96px);
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0e1015;
-      --panel: #171a21;
-      --line: #2a2e38;
-      --ink: #eceef4;
-      --muted: #8d93a3;
-    }
-  }
+
   * { box-sizing: border-box; }
+
   body {
     margin: 0;
-    min-height: 100vh;
-    background: var(--bg);
-    color: var(--ink);
-    font: 400 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--color-warm-parchment);
+    color: var(--color-ink-charcoal);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 460;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
   }
-  .app { display: grid; grid-template-columns: 232px 1fr; min-height: 100vh; }
 
-  .sidebar {
-    border-right: 1px solid var(--line);
-    background: var(--panel);
-    padding: 18px 14px;
-    display: flex; flex-direction: column; gap: 6px;
+  .inner {
+    max-width: var(--page-max-width);
+    margin: 0 auto;
+    padding-inline: clamp(20px, 5vw, 40px);
   }
-  .brand { display: flex; align-items: center; gap: 9px; font-weight: 650; margin: 4px 6px 18px; }
-  .brand-mark {
-    width: 24px; height: 24px; border-radius: 7px;
-    background: linear-gradient(135deg, #6366f1, #a855f7);
-  }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 10px; border-radius: 8px;
-    color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500;
-  }
-  .nav-item[aria-current="page"] { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
-  .nav-item:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
 
-  .main { display: flex; flex-direction: column; min-width: 0; }
-  .toolbar {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 24px; border-bottom: 1px solid var(--line); background: var(--panel);
+  a { color: var(--color-royal-violet); text-underline-offset: 3px; }
+
+  /* ---------- announcement + header ---------- */
+
+  .announce {
+    background: var(--color-midnight-wine);
+    color: var(--color-paper-white);
+    font-size: 12px;
+    line-height: 1.5;
   }
-  h1 { font-size: 17px; margin: 0; font-weight: 640; }
-  .spacer { margin-left: auto; }
-  .search {
-    padding: 7px 11px; border: 1px solid var(--line); border-radius: 8px;
-    background: var(--bg); color: inherit; font: inherit; font-size: 14px; width: 220px;
+  .announce .inner {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding-block: 8px;
   }
+  .announce span { opacity: .8; }
+
+  header.site {
+    position: sticky; top: 0; z-index: 20;
+    backdrop-filter: blur(12px);
+    background: rgba(242, 240, 235, 0.72);
+    border-bottom: 1px solid transparent;
+    transition: border-color 220ms ease;
+  }
+  header.site[data-stuck="true"] { border-bottom-color: var(--color-soft-mist); }
+  header.site .inner {
+    display: flex; align-items: center; gap: 24px;
+    padding-block: 16px;
+  }
+  .logo { display: inline-flex; align-items: center; text-decoration: none; }
+  .logo-img { display: block; height: 28px; width: auto; }
+  /* The supplied lockup is two-tone and dark, so on the wine footer it becomes
+     a flat white mono version rather than a muddy overlay. */
+  .logo-img.on-dark { height: 30px; filter: brightness(0) invert(1); }
+  header nav { display: flex; gap: 24px; margin-inline: auto; font-size: 16px; }
+  header nav a { color: var(--color-ink-charcoal); text-decoration: none; }
+  header nav a:hover { color: var(--color-royal-violet); }
+  @media (max-width: 700px) { header nav { display: none; } }
+
+  /* ---------- buttons ---------- */
+
   .btn {
-    padding: 7px 13px; border-radius: 8px; border: 1px solid transparent;
-    font: inherit; font-size: 14px; font-weight: 550; cursor: pointer;
+    font-family: var(--font-sans); font-size: 16px; font-weight: 460; line-height: 1.2;
+    border: 1px solid transparent; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
   }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-ghost { background: transparent; border-color: var(--line); color: inherit; }
-
-  .content { padding: 24px; display: grid; gap: 18px; }
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
-  .card {
-    background: var(--panel); border: 1px solid var(--line);
-    border-radius: var(--radius); padding: 16px;
+  .btn-primary {
+    background: var(--color-midnight-wine); color: var(--color-paper-white);
+    border-radius: var(--radius-cards); padding: 12px 20px;
   }
-  .card .label { font-size: 12.5px; color: var(--muted); font-weight: 550; letter-spacing: .02em; }
-  .card .value { font-size: 26px; font-weight: 660; margin-top: 4px; letter-spacing: -.02em; }
-  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
-  .panel-head { padding: 14px 16px; border-bottom: 1px solid var(--line); font-weight: 620; font-size: 14.5px; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { text-align: left; padding: 10px 16px; border-bottom: 1px solid var(--line); }
-  th { color: var(--muted); font-weight: 550; font-size: 12.5px; }
-  tr:last-child td { border-bottom: 0; }
-  .pill { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); font-weight: 560; }
+  .btn-primary:hover { background: var(--color-wine-hover); }
+  .btn-outline-light {
+    background: var(--color-lilac-mist); color: var(--color-ink-charcoal);
+    border-color: var(--color-ink-charcoal);
+    border-radius: var(--radius-tabs); padding: 6px 16px; font-size: 14px;
+  }
+  .btn-on-dark {
+    background: transparent; color: var(--color-paper-white);
+    border-color: rgba(255, 255, 255, 0.55);
+    border-radius: var(--radius-cards); padding: 12px 20px;
+  }
+  .btn-on-dark:hover { border-color: var(--color-paper-white); }
+  .btn-ghost {
+    background: transparent; color: var(--color-ink-charcoal);
+    padding: 8px 0; font-size: 16px;
+  }
+  .btn:focus-visible { outline: 2px solid var(--color-royal-violet); outline-offset: 3px; }
 
-  .tall { height: 780px; display: grid; place-items: center; color: var(--muted); font-size: 14px; }
-  .footnote { color: var(--muted); font-size: 13px; }
-  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  /* ---------- hero ---------- */
 
-  /* Guidepost theming lives entirely in custom properties. */
-  .gp-card { --gp-accent: #4f46e5; --gp-accent-hover: #4338ca; }
+  .hero {
+    position: relative;
+    background:
+      radial-gradient(90% 120% at 78% 8%, rgba(212, 199, 255, 0.75) 0%, rgba(212, 199, 255, 0) 55%),
+      radial-gradient(80% 110% at 12% 4%, rgba(66, 29, 36, 0.16) 0%, rgba(66, 29, 36, 0) 52%),
+      var(--color-warm-parchment);
+    padding-block: clamp(56px, 8vw, 96px) 0;
+    overflow: hidden;
+  }
+  .hero-grid { display: grid; gap: 40px; }
+  @media (min-width: 900px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: center; gap: 56px; }
+  }
+
+  .tagline {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--color-soft-mist); border-radius: var(--radius-pills);
+    padding: 6px 14px; font-size: 12px; color: var(--color-stone-gray);
+    background: rgba(255, 255, 255, 0.6);
+  }
+  .tagline b { color: var(--color-ink-charcoal); font-weight: 540; }
+
+  h1 {
+    margin: 24px 0 20px;
+    font-size: clamp(40px, 6.4vw, 64px);
+    font-weight: 540;
+    line-height: 0.96;
+    letter-spacing: -1.8px;
+    max-width: 12ch;
+  }
+  .hero p.sub {
+    margin: 0 0 28px;
+    font-size: 19px; line-height: 1.5; color: var(--color-stone-gray);
+    max-width: 46ch;
+  }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+  /* floating product card over the gradient */
+  /* Parchment glass, so the white product card inside reads as elevated
+     rather than white-on-white. */
+  .float {
+    background: rgba(242, 240, 235, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: var(--radius-cards);
+    padding: 16px;
+  }
+  .stage { border-radius: 12px; overflow: hidden; border: 1px solid var(--color-soft-mist); background: var(--color-paper-white); }
+  .stage-top {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px; border-bottom: 1px solid var(--color-soft-mist);
+  }
+  .stage-top b { font-weight: 540; font-size: 14px; }
+  .stage-top .grow { margin-left: auto; }
+  .field {
+    font-family: var(--font-sans); font-size: 14px; font-weight: 460;
+    padding: 7px 14px; border-radius: var(--radius-pills);
+    border: 1px solid var(--color-soft-mist); background: var(--color-warm-parchment);
+    color: var(--color-ink-charcoal); width: min(150px, 38vw);
+  }
+  .field::placeholder { color: var(--color-stone-gray); }
+  .field:focus-visible { outline: 2px solid var(--color-royal-violet); outline-offset: 2px; }
+
+  .stage-body { display: grid; grid-template-columns: 132px 1fr; }
+  @media (max-width: 560px) { .stage-body { grid-template-columns: 1fr; } .rail { display: none; } }
+  .rail { border-right: 1px solid var(--color-soft-mist); padding: 12px 10px; display: flex; flex-direction: column; gap: 2px; }
+  .rail-item {
+    font-family: var(--font-sans); font-size: 14px; font-weight: 460; text-align: left;
+    padding: 7px 10px; border: 0; border-radius: var(--radius-tabs);
+    background: transparent; color: var(--color-stone-gray); cursor: pointer;
+    transition: background-color 140ms ease, color 140ms ease;
+  }
+  .rail-item[aria-current="page"] { background: var(--color-lilac-mist); color: var(--color-ink-charcoal); }
+  .rail-item:hover { color: var(--color-ink-charcoal); background: var(--color-warm-parchment); }
+  .rail-item[aria-current="page"]:hover { background: var(--color-lilac-mist); }
+  .rail-item:focus-visible { outline: 2px solid var(--color-royal-violet); outline-offset: 1px; }
+
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .tile { padding: 16px; border-right: 1px solid var(--color-soft-mist); }
+  .tile:last-child { border-right: 0; }
+  .tile dt { font-size: 12px; color: var(--color-stone-gray); }
+  .tile dd { margin: 4px 0 0; font-size: 28px; font-weight: 540; line-height: 1.14; letter-spacing: -0.62px; }
+
+  .rows { border-top: 1px solid var(--color-soft-mist); }
+  .row {
+    display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center;
+    padding: 12px 16px; border-bottom: 1px solid var(--color-soft-mist); font-size: 14px;
+  }
+  .row:last-child { border-bottom: 0; }
+  .row .who { color: var(--color-stone-gray); font-size: 12px; }
+
+  /* ---------- suite tabs ---------- */
+
+  .tabs-wrap { padding-block: var(--section-gap) 0; }
+  .tabs {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+    background: var(--color-paper-white); border: 1px solid var(--color-soft-mist);
+    border-radius: var(--radius-tabs); padding: 4px; max-width: 520px;
+  }
+  .tab {
+    font-family: var(--font-sans); font-size: 14px; font-weight: 460;
+    border: 0; background: transparent; color: var(--color-stone-gray);
+    border-radius: var(--radius-tabs); padding: 9px 12px; cursor: pointer;
+  }
+  .tab[aria-selected="true"] { background: var(--color-lilac-mist); color: var(--color-ink-charcoal); }
+  .tab:focus-visible { outline: 2px solid var(--color-royal-violet); outline-offset: 2px; }
+  .tab-note { margin: 12px 0 0; font-size: 14px; color: var(--color-stone-gray); max-width: 52ch; }
+
+  /* ---------- dark feature band ---------- */
+
+  .lagoon {
+    background: var(--color-deep-lagoon);
+    color: var(--color-paper-white);
+    margin-top: var(--section-gap);
+    padding-block: clamp(56px, 8vw, 96px);
+  }
+  .lagoon-grid { display: grid; gap: 40px; }
+  @media (min-width: 900px) { .lagoon-grid { grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; } }
+  .lagoon h2 {
+    margin: 0 0 20px;
+    font-size: clamp(36px, 5.6vw, 64px); font-weight: 460; line-height: 0.96;
+    letter-spacing: -1.8px; max-width: 13ch;
+  }
+  .lagoon p { margin: 0 0 28px; color: rgba(255, 255, 255, 0.8); max-width: 46ch; }
+
+  .prims { display: flex; flex-direction: column; gap: 1px; }
+  .prim {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 4px; border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    font-size: 16px; color: rgba(255, 255, 255, 0.8);
+  }
+  .prim:last-child { border-bottom: 0; }
+  .prim[data-ok="true"] { color: var(--color-paper-white); }
+  .prim svg { flex: none; }
+  .prim .role { margin-left: auto; font-size: 12px; color: rgba(255, 255, 255, 0.55); }
+
+  /* ---------- how it works ---------- */
+
+  .how { padding-block: var(--section-gap); }
+  .how-head { margin-bottom: 32px; }
+  .how h2 {
+    margin: 0; font-size: clamp(28px, 3.4vw, 28px); font-weight: 540;
+    line-height: 1.14; letter-spacing: -0.62px;
+  }
+  .how-list { display: grid; gap: 8px; max-width: 800px; }
+
+  details {
+    background: var(--color-paper-white);
+    border: 1px solid var(--color-soft-mist);
+    border-radius: var(--radius-cards);
+    padding: 16px 20px;
+  }
+  details[open] { box-shadow: var(--shadow-subtle); }
+  summary {
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    cursor: pointer; list-style: none; font-size: 19px; font-weight: 700;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:focus-visible { outline: 2px solid var(--color-royal-violet); outline-offset: 4px; border-radius: 6px; }
+  summary svg { flex: none; transition: transform 200ms ease; }
+  details[open] summary svg { transform: rotate(180deg); }
+  details p { margin: 12px 0 0; color: var(--color-stone-gray); font-size: 16px; max-width: 62ch; }
+  details code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px;
+    background: var(--color-warm-parchment); padding: 2px 6px; border-radius: 6px;
+    color: var(--color-ink-charcoal);
+  }
+
+  /* ---------- footer ---------- */
+
+  footer.site {
+    background: var(--color-midnight-wine); color: var(--color-paper-white);
+    padding-block: 64px;
+  }
+  .foot-grid { display: grid; gap: 40px; }
+  @media (min-width: 760px) { .foot-grid { grid-template-columns: 2fr 1fr 1fr; gap: 48px; } }
+  footer.site h3 { margin: 0 0 16px; font-size: 14px; font-weight: 540; }
+  footer.site ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  footer.site li, footer.site p { color: rgba(255, 255, 255, 0.7); font-size: 14px; margin: 0; }
+  footer.site .brand { display: flex; align-items: center; margin-bottom: 16px; }
+
+  .sr {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+
+  /* ---------- tour theming ----------
+     Higher specificity than the library's injected stylesheet, which lands
+     after this one when the first tour starts. */
+
+  .gp-root .gp-card {
+    --gp-accent: #421d24;
+    --gp-accent-hover: #57262f;
+    --gp-accent-text: #ffffff;
+    --gp-accent-soft: #d4c7ff;
+    --gp-surface: #ffffff;
+    --gp-surface-2: #d4c7ff;
+    --gp-surface-3: #c7b7ff;
+    --gp-border: #292827;
+    --gp-text: #292827;
+    --gp-body-text: #666666;
+    --gp-muted: #666666;
+    --gp-dot: #e3e3e2;
+    --gp-radius: 16px;
+    --gp-card-width: 23rem;
+    --gp-card-padding: 20px 20px 16px;
+    /* The system defines exactly one shadow: a violet inset stroke. */
+    --gp-shadow: rgb(113, 76, 182) 0px 0px 0px 1px inset;
+    --gp-font: 460 16px/1.5 'Super Sans VF', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  }
+  .gp-root .gp-title { font-size: 19px; font-weight: 540; letter-spacing: -0.3px; }
+  .gp-root .gp-counter {
+    font-size: 12px; font-weight: 460; letter-spacing: 0; text-transform: none;
+    color: var(--color-stone-gray);
+  }
+  .gp-root .gp-btn { border-radius: 16px; padding: 10px 18px; font-weight: 460; font-size: 15px; }
+  .gp-root .gp-btn[data-variant="secondary"] { border-radius: 8px; padding: 7px 16px; }
+  .gp-root .gp-close { border-radius: 8px; }
+  .gp-root .gp-scrim { --gp-overlay: rgb(41 40 39 / 0.62); }
+  .gp-root .gp-ring {
+    --gp-ring-color: rgb(255 255 255 / 0.85);
+    --gp-ring-halo: rgb(212 199 255 / 0.45);
+  }
 </style>
-</head>
-<body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="brand"><span class="brand-mark" aria-hidden="true"></span> Northwind</div>
-      <a class="nav-item" href="#" aria-current="page" id="nav-home">Overview</a>
-      <a class="nav-item" href="#" id="nav-reports">Reports</a>
-      <a class="nav-item" href="#" id="nav-team">Team</a>
-      <a class="nav-item" href="#" id="nav-settings">Settings</a>
-    </aside>
 
-    <main class="main">
-      <header class="toolbar">
-        <h1>Overview</h1>
-        <div class="spacer"></div>
-        <input class="search" id="search" type="search" placeholder="Search records…" aria-label="Search records">
-        <button class="btn btn-ghost" id="btn-filter">Filter</button>
-        <button class="btn btn-primary" id="btn-new">New record</button>
-      </header>
-
-      <div class="content">
-        <div class="controls">
-          <button class="btn btn-primary" id="start-tour">Start the tour</button>
-          <button class="btn btn-ghost" id="start-js">Start with JS positioning</button>
-          <button class="btn btn-ghost" id="start-noblock">Start non-blocking</button>
-          <span class="footnote" id="support"></span>
-        </div>
-
-        <section class="stats" id="stats">
-          <div class="card"><div class="label">Active records</div><div class="value">2,481</div></div>
-          <div class="card"><div class="label">This week</div><div class="value">+184</div></div>
-          <div class="card"><div class="label">Open issues</div><div class="value">7</div></div>
-          <div class="card"><div class="label">Team members</div><div class="value">12</div></div>
-        </section>
-
-        <section class="panel" id="table-panel">
-          <div class="panel-head">Recent activity</div>
-          <table>
-            <thead><tr><th>Record</th><th>Owner</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td>Q3 forecast</td><td>A. Munns</td><td><span class="pill">In review</span></td></tr>
-              <tr><td>Vendor renewals</td><td>K. Osei</td><td><span class="pill">Draft</span></td></tr>
-              <tr><td>Headcount plan</td><td>R. Silva</td><td><span class="pill">Approved</span></td></tr>
-            </tbody>
-          </table>
-        </section>
-
-        <div class="tall" aria-hidden="true">(a lot of page)</div>
-
-        <section class="panel" id="far-below" style="padding:20px">
-          Scroll target — a step down here proves the smooth-scroll handoff works.
-        </section>
-      </div>
-    </main>
+<div class="announce">
+  <div class="inner">
+    guidepost <span id="version">0.0.0</span> <span>&middot; MIT &middot; 9.4 kB &middot; no dependencies</span>
   </div>
+</div>
+
+<header class="site" id="site-header">
+  <div class="inner">
+    <a class="logo" href="#top">
+      <img class="logo-img" src="/guidepost-logo.png" alt="Guidepost" width="194" height="28">
+    </a>
+    <nav>
+      <a href="#modes">Modes</a>
+      <a href="#primitives">Primitives</a>
+      <a href="#how">How it works</a>
+    </nav>
+    <button class="btn btn-outline-light" id="run-top">Run the tour</button>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="inner hero-grid">
+      <div>
+        <span class="tagline"><b>9.4 kB</b> and no positioning engine</span>
+        <h1>The browser does the hard parts now</h1>
+        <p class="sub">
+          No Floating UI, no z-index wars, no hand-rolled focus trap. Guidepost is the
+          glue between the bits your browser already ships.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="run">
+            Run the tour
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M3 8h9m0 0-3.5-3.5M12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <a class="btn btn-ghost" href="#how">How it works</a>
+        </div>
+      </div>
+
+      <div class="float">
+        <div class="stage" id="stage">
+          <div class="stage-top">
+            <b>Meridian</b>
+            <span class="grow"></span>
+            <input class="field" id="stage-search" type="search" placeholder="Filter lanes" aria-label="Filter lanes">
+            <button class="btn btn-outline-light" id="stage-new">New lane</button>
+          </div>
+          <div class="stage-body">
+            <nav class="rail" aria-label="Demo navigation">
+              <button type="button" class="rail-item" data-view="overview" aria-current="page">Overview</button>
+              <button type="button" class="rail-item" data-view="shipments" id="nav-shipments">Shipments</button>
+              <button type="button" class="rail-item" data-view="carriers" id="nav-carriers">Carriers</button>
+              <button type="button" class="rail-item" data-view="settings" id="nav-settings">Settings</button>
+            </nav>
+            <div>
+              <dl class="tiles" id="stage-tiles"></dl>
+              <div class="rows" id="stage-rows"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="inner tabs-wrap" id="modes">
+    <div class="tabs" role="tablist" aria-label="Tour mode">
+      <button class="tab" role="tab" aria-selected="true" data-mode="default">Default</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="js">JS fallback</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="open">Non-blocking</button>
+    </div>
+    <p class="tab-note" id="tab-note">
+      Page goes inert, but the highlighted element stays clickable. Pick a mode, then run the tour.
+    </p>
+  </section>
+
+  <section class="lagoon" id="primitives">
+    <div class="inner lagoon-grid">
+      <div>
+        <h2>Five things you used to write yourself</h2>
+        <p>
+          Every layer of this tour is a browser feature. Here is what yours has,
+          checked when the page loaded.
+        </p>
+        <a class="btn btn-on-dark" href="#how">Read the detail</a>
+      </div>
+      <div class="prims" id="prim-list"></div>
+    </div>
+  </section>
+
+  <section class="inner how" id="how">
+    <div class="how-head">
+      <h2>How it works</h2>
+    </div>
+    <div class="how-list">
+
+      <details>
+        <summary>Why is there no z-index?
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 8l5 5 5-5" stroke="#292827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </summary>
+        <p>The card is a <code>popover</code>, so it sits in the top layer. Nothing on your
+        page can cover it and no parent with <code>overflow: hidden</code> can clip it.</p>
+      </details>
+
+      <details>
+        <summary>How does the card stay glued to things?
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 8l5 5 5-5" stroke="#292827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </summary>
+        <p>CSS anchor positioning. The browser keeps it attached through scroll and resize,
+        so there is no Floating UI and no scroll listener. Older browsers get a measured
+        fallback instead, which is what the JS fallback tab switches on.</p>
+      </details>
+
+      <details>
+        <summary>Why can I still click the highlighted thing?
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 8l5 5 5-5" stroke="#292827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </summary>
+        <p>The dim is one element with a hole cut in it by <code>clip-path</code>. Clipping
+        affects hit testing, so clicks fall straight through the hole. No stack of four divs
+        framing the target.</p>
+      </details>
+
+      <details>
+        <summary>What stops Tab escaping the tour?
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 8l5 5 5-5" stroke="#292827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </summary>
+        <p><code>inert</code>. Everything except the card and the highlighted element is
+        marked inert, which also hides it from screen readers. No keydown interception, no
+        hidden sentinel nodes.</p>
+      </details>
+
+      <details>
+        <summary>How does it fade out without a timer?
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 8l5 5 5-5" stroke="#292827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </summary>
+        <p><code>@starting-style</code> plus <code>transition-behavior: allow-discrete</code>.
+        The card animates in and out on its own, so nothing vanishes halfway through a fade.</p>
+      </details>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="inner foot-grid">
+    <div>
+      <div class="brand">
+        <img class="logo-img on-dark" src="/guidepost-logo.png" alt="Guidepost" width="208" height="30">
+      </div>
+      <p>Accessible product tours built on browser primitives. MIT licensed.</p>
+    </div>
+    <div>
+      <h3>Built on</h3>
+      <ul>
+        <li>Popover API</li>
+        <li>CSS anchor positioning</li>
+        <li>inert</li>
+        <li>clip-path</li>
+      </ul>
+    </div>
+    <div>
+      <h3>This browser</h3>
+      <ul><li id="support-note"></li></ul>
+    </div>
+  </div>
+</footer>
 
 <script type="module">
 import { Tour, supportsAnchorPositioning } from '@cmunns/guidepost';
+import { version } from '../../package.json';
 
-document.getElementById('support').textContent =
-  supportsAnchorPositioning()
-    ? 'CSS anchor positioning: supported — using the native tether.'
-    : 'CSS anchor positioning: unsupported — using the measured fallback.';
+// Read from package.json rather than hardcoding, so the banner tracks releases.
+document.getElementById('version').textContent = version;
+
+/* ---- header border fades in on scroll ---- */
+
+const header = document.getElementById('site-header');
+const onScroll = () => { header.dataset.stuck = String(window.scrollY > 8); };
+addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+/* ---- what this browser has ---- */
+
+const anchorOK = supportsAnchorPositioning();
+
+const caps = [
+  ['Popover API', 'top layer', 'popover' in HTMLElement.prototype],
+  ['CSS anchor positioning', 'the tether', anchorOK],
+  ['inert', 'focus containment', 'inert' in HTMLElement.prototype],
+  ['@starting-style', 'enter and exit', CSS.supports('transition-behavior', 'allow-discrete')],
+  ['clip-path: path()', 'the spotlight', CSS.supports('clip-path', 'path("M0,0 H1 V1 Z")')],
+];
+
+const tick = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">' +
+  '<path d="M3.5 9.5l3.5 3.5L14.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const cross = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">' +
+  '<path d="M4.5 4.5l9 9M13.5 4.5l-9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+
+const list = document.getElementById('prim-list');
+for (const [name, role, ok] of caps) {
+  const el = document.createElement('div');
+  el.className = 'prim';
+  el.dataset.ok = String(ok);
+  el.innerHTML = (ok ? tick : cross) +
+    '<span>' + name + '</span>' +
+    '<span class="sr">' + (ok ? 'supported' : 'not supported') + '</span>' +
+    '<span class="role">' + role + '</span>';
+  list.appendChild(el);
+}
+
+document.getElementById('support-note').textContent = anchorOK
+  ? 'Anchor positioning is on, so the tour uses the native tether.'
+  : 'No anchor positioning here, so the tour measures instead.';
+
+/* ---- the sandbox app actually works ----
+   Buttons, not links: an <a href="#..."> here would jump the page instead of
+   doing what the tour says it does. */
+
+const VIEWS = {
+  overview: {
+    tiles: [['In transit', '1,204'], ['On time', '94%'], ['Issues', '17']],
+    rows: [
+      ['Long Beach to Phoenix', 'Northline'],
+      ['Savannah to Atlanta', 'Gulfway'],
+      ['Newark to Boston', 'Harbor Freight'],
+    ],
+  },
+  shipments: {
+    tiles: [['Active', '318'], ['Delivered', '2,940'], ['Late', '12']],
+    rows: [
+      ['SHP-40182', 'Out for delivery'],
+      ['SHP-40179', 'At terminal'],
+      ['SHP-40166', 'Delivered'],
+    ],
+  },
+  carriers: {
+    tiles: [['Carriers', '24'], ['Contracts', '19'], ['Avg score', '4.6']],
+    rows: [
+      ['Northline', 'West, 8 lanes'],
+      ['Gulfway', 'Southeast, 5 lanes'],
+      ['Harbor Freight', 'Northeast, 6 lanes'],
+    ],
+  },
+  settings: {
+    tiles: [['Members', '12'], ['Alerts', '4'], ['Webhooks', '2']],
+    rows: [
+      ['Notifications', 'Email and Slack'],
+      ['Data retention', '24 months'],
+      ['API keys', '3 active'],
+    ],
+  },
+};
+
+const tilesEl = document.getElementById('stage-tiles');
+const rowsEl = document.getElementById('stage-rows');
+
+function render(view) {
+  const data = VIEWS[view];
+  tilesEl.replaceChildren(...data.tiles.map(([label, value]) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'tile';
+    wrap.innerHTML = '<dt>' + label + '</dt><dd>' + value + '</dd>';
+    return wrap;
+  }));
+  rowsEl.replaceChildren(...data.rows.map(([main, meta]) => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = '<span>' + main + '</span><span class="who">' + meta + '</span>';
+    return row;
+  }));
+}
+
+const railItems = [...document.querySelectorAll('.rail-item')];
+for (const item of railItems) {
+  item.addEventListener('click', () => {
+    for (const other of railItems) other.removeAttribute('aria-current');
+    item.setAttribute('aria-current', 'page');
+    render(item.dataset.view);
+    // The panel changed size, so re-place the card and spotlight.
+    active?.refresh();
+  });
+}
+
+render('overview');
+
+/* ---- mode tabs ---- */
+
+const NOTES = {
+  default: 'Page goes inert, but the highlighted element stays clickable. Pick a mode, then run the tour.',
+  js: 'Forces the measured fallback, the same path older browsers take. Same result, more work.',
+  open: 'Nothing is inert and nothing intercepts clicks. Carry on using the app while the tour runs.',
+};
+const MODES = { default: {}, js: { strategy: 'js' }, open: { blocking: false } };
+
+let mode = 'default';
+const tabs = [...document.querySelectorAll('.tab')];
+for (const tab of tabs) {
+  tab.addEventListener('click', () => {
+    mode = tab.dataset.mode;
+    for (const t of tabs) t.setAttribute('aria-selected', String(t === tab));
+    document.getElementById('tab-note').textContent = NOTES[mode];
+  });
+}
+
+/* ---- the tour ---- */
 
 const steps = [
   {
-    id: 'welcome',
-    title: 'Welcome to Northwind',
-    text: 'A quick five-step tour. Use the arrow keys to move, or press Escape to leave at any point.',
+    id: 'intro',
     placement: 'center',
+    title: 'Quick tour',
+    text: 'Six steps. Arrow keys move, Escape gets you out.',
   },
   {
-    id: 'nav',
-    target: '#nav-reports',
-    title: 'Everything lives in the sidebar',
-    text: 'Reports, your team, and workspace settings. The spotlight is a clip-path cutout, so this link is still clickable.',
+    id: 'primitives',
+    target: '#prim-list',
+    placement: 'left',
+    title: anchorOK ? 'Glued by CSS' : 'Glued by math',
+    text: anchorOK
+      ? 'Your browser has anchor positioning, so the card is stuck to this list by CSS. Nothing is listening to scroll.'
+      : 'Your browser has no anchor positioning, so the card is placed by measurement.',
+  },
+  {
+    id: 'rail',
+    target: '#nav-carriers',
     placement: 'right-start',
+    title: 'Still clickable',
+    text: 'The dim has a hole cut in it, and clicks fall through it. Click Carriers and the panel switches.',
   },
   {
-    id: 'stats',
-    target: '#stats',
-    title: 'Your numbers at a glance',
-    text: 'These refresh every fifteen minutes. The card resizes and glides between steps rather than jumping.',
+    id: 'tiles',
+    target: '#stage-tiles',
     placement: 'bottom',
-    padding: 10,
+    padding: 8,
+    title: 'Watch it move',
+    text: 'The card slides and resizes between steps instead of popping in and out.',
   },
   {
     id: 'search',
-    target: '#search',
-    title: 'Try typing something',
-    text: 'This step is interactive — the field has focus and the rest of the page is inert. Type anything to continue.',
+    target: '#stage-search',
     placement: 'bottom-end',
     focus: 'target',
+    title: 'Type something',
+    text: 'Three characters and it moves on. No Next button, and the rest of the page is inert.',
     advanceOn: { event: 'input', when: (e) => e.target.value.length > 2 },
     buttons: [
       { label: 'Back', action: 'back', variant: 'secondary' },
@@ -194,44 +702,25 @@ const steps = [
     ],
   },
   {
-    id: 'below',
-    target: '#far-below',
-    title: 'Scrolling is handled',
-    text: 'The tour scrolls the target into view and waits for the scroll to settle before it positions anything.',
-    placement: 'top',
-  },
-  {
-    id: 'new',
-    target: '#btn-new',
-    title: 'Create your first record',
-    text: 'That is the whole tour. Everything here is native: Popover API for layering, anchor positioning for the tether, inert for focus containment.',
-    placement: 'bottom-end',
+    id: 'done',
+    target: '#run',
+    placement: 'bottom-start',
+    title: "That's it",
+    text: 'Everything you just saw is built into the browser. The library is the glue.',
   },
 ];
 
-const base = {
-  id: 'northwind-onboarding',
-  steps,
-  onComplete: () => console.log('[demo] tour completed'),
-  onCancel: () => console.log('[demo] tour cancelled'),
-};
-
 let active = null;
-function launch(extra) {
+
+function launch() {
   active?.destroy();
-  active = new Tour({ ...base, ...extra });
+  active = new Tour({ id: 'guidepost-demo', steps, ...MODES[mode] });
   active.start();
-  window.__tour = active;
 }
 
-document.getElementById('start-tour').addEventListener('click', () => launch({}));
-document.getElementById('start-js').addEventListener('click', () => launch({ strategy: 'js' }));
-document.getElementById('start-noblock').addEventListener('click', () =>
-  launch({ blocking: false }),
-);
+document.getElementById('run').addEventListener('click', launch);
+document.getElementById('run-top').addEventListener('click', launch);
 
 window.__launch = launch;
 window.__Tour = Tour;
 </script>
-</body>
-</html>
