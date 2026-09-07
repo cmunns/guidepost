@@ -1,7 +1,7 @@
 {
   "name": "@cmunns/guidepost",
   "version": "0.1.4",
-  "description": "Accessible product tours built on native browser primitives — Popover API, CSS anchor positioning, and animated clip-path spotlights. No positioning dependency.",
+  "description": "Accessible product tours built on native browser primitives \u2014 Popover API, CSS anchor positioning, and animated clip-path spotlights. No positioning dependency.",
   "type": "module",
   "license": "MIT",
   "author": "cmunns",
@@ -60,7 +60,9 @@
     "build:demo": "npm run build && npm run build --workspace=demo",
     "build:docs": "npm run build && npm run build --workspace=docs",
     "build:sites": "npm run build && npm run build --workspace=demo && npm run build --workspace=docs",
-    "release": "node scripts/release.mjs"
+    "release": "node scripts/release.mjs",
+    "vercel-build:demo": "npm run build && npm run build --workspace=demo",
+    "vercel-build:docs": "npm run build && npm run build --workspace=docs"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.0",

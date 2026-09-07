@@ -9,3 +9,5 @@ artifact/guidepost-demo.html
 sites/*/dist/
 sites/docs/.astro/
 .vercel/
+.vercel
+.env*
