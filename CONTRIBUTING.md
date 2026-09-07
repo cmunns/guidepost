@@ -49,15 +49,37 @@ Starlight's tokens in `sites/docs/src/styles/theme.css`.
 ## Releasing
 
 ```bash
-npm run release -- patch --dry-run   # verify without publishing
+npm run release -- patch --dry-run   # verify without touching anything
 npm run release -- patch             # or minor / major / an explicit x.y.z
 ```
 
-The script refuses to run on a dirty tree or off `main`. It typechecks, builds,
-tests, and inspects the tarball before it versions, tags, publishes to npm, and
-pushes. Pushing the tag also triggers `.github/workflows/release.yml`, which
-publishes with provenance and cuts a GitHub release — so CI needs an `NPM_TOKEN`
-secret.
+The script refuses to run on a dirty tree, off `main`, or without CI publish
+credentials. It typechecks, builds, tests, and inspects the tarball, then
+versions, tags, and pushes.
+
+**Publishing happens in CI, not on your machine.** The npm account has 2FA set
+to `auth-and-writes`, so `npm publish` from a script tries to open a browser
+and fails. Instead, the pushed tag triggers
+`.github/workflows/release.yml`, which publishes with provenance using a token
+and cuts a GitHub release.
+
+### One-time setup
+
+Create a **granular access token** at
+https://www.npmjs.com/settings/cmunns/tokens — scoped to `@cmunns/guidepost`,
+with read and write, and 2FA bypass enabled so automation can use it. Then:
+
+```bash
+gh secret set NPM_TOKEN
+```
+
+Without that secret the release script stops before it changes anything.
+
+### If a release fails midway
+
+The tag is pushed before publishing, so CI can be retried without re-tagging:
+run the Release workflow manually from the Actions tab and give it the existing
+tag. Nothing needs to be reset locally.
 
 ## Deploys
 
