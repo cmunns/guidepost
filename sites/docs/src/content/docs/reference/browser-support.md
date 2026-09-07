@@ -19,5 +19,5 @@ import { supportsAnchorPositioning } from '@cmunns/guidepost';
 supportsAnchorPositioning(); // true on the native path
 ```
 
-[guidepost.dev](https://guidepost.dev) reports which path your browser is on.
+[the live demo](https://guidepost-demo.vercel.app) reports which path your browser is on.
 </content>

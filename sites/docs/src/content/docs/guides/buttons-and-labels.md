@@ -39,5 +39,5 @@ new Tour({
 ```
 
 A German-language tour is among the live examples at
-[guidepost.dev](https://guidepost.dev).
+[the live demo](https://guidepost-demo.vercel.app).
 </content>
