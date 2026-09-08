@@ -138,6 +138,18 @@ live region instead. The step counter is part of the card's `aria-labelledby`, s
 it reads as *"Step 2 of 5, Invite your team"* in one go instead of interrupting
 separately.
 
+## Agents and LLMs
+
+The demo registers [WebMCP](https://developer.chrome.com/docs/ai/webmcp) tools
+(`start_tour`, `next_step`, `go_to_step`, `get_tour_state` and friends), so an
+agent in a supporting browser drives the tour through the browser's own tool
+API instead of guessing at buttons. The
+[Agents and WebMCP](https://docs.guidepost.live/guides/agents/) guide shows how
+to wrap your own tour the same way in a few lines. Both sites publish
+`llms.txt` ([demo](https://guidepost.live/llms.txt),
+[docs](https://docs.guidepost.live/llms-full.txt)) and allow AI crawlers by
+name in `robots.txt`.
+
 ## Browser support
 
 | Feature | Chrome | Safari | Firefox | Fallback |

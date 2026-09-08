@@ -13,9 +13,12 @@ export default defineConfig({
     ...devices['Desktop Chrome'],
     baseURL: 'http://127.0.0.1:4173',
     // Use whatever Chromium is already on the machine rather than downloading one.
-    launchOptions: process.env.CHROMIUM_PATH
-      ? { executablePath: process.env.CHROMIUM_PATH }
-      : {},
+    launchOptions: {
+      ...(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {}),
+      // WebMCP ships behind an origin trial. This base feature flag turns it on
+      // in any Chromium so the agent-tools test can exercise the real API.
+      args: ['--enable-features=WebMCP'],
+    },
   },
   // Tests run against the built demo site, so they exercise the same bundle
   // that gets deployed rather than loose files served off disk.

@@ -1,4 +1,42 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Guidepost</title>
+<meta name="description" content="Accessible product tours built on native browser primitives: the Popover API, CSS anchor positioning, inert and a clip-path spotlight. 9.7 kB, zero dependencies, MIT.">
+<link rel="canonical" href="https://guidepost.live/">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<meta name="theme-color" content="#421d24">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Guidepost">
+<meta property="og:title" content="Guidepost: the browser does the hard parts now">
+<meta property="og:description" content="Accessible product tours built on native browser primitives. 9.7 kB, zero dependencies, MIT.">
+<meta property="og:url" content="https://guidepost.live/">
+<meta property="og:image" content="https://guidepost.live/guidepost-logo.png">
+<meta name="twitter:card" content="summary">
+<!-- WebMCP is behind an origin trial in Chrome 149+. Register https://guidepost.live at
+     https://developer.chrome.com/origintrials and paste the token here:
+     <meta http-equiv="origin-trial" content="TOKEN"> -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebSite", "name": "Guidepost", "url": "https://guidepost.live/" },
+    {
+      "@type": "SoftwareSourceCode",
+      "name": "Guidepost",
+      "url": "https://guidepost.live/",
+      "description": "Accessible product tours built on native browser primitives: the Popover API, CSS anchor positioning, inert and a clip-path spotlight. 9.7 kB, zero dependencies, MIT.",
+      "codeRepository": "https://github.com/cmunns/guidepost",
+      "programmingLanguage": "TypeScript",
+      "runtimePlatform": "Web browser",
+      "license": "https://opensource.org/licenses/MIT",
+      "installUrl": "https://www.npmjs.com/package/@cmunns/guidepost",
+      "documentation": "https://docs.guidepost.live/"
+    }
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap">
@@ -501,6 +539,8 @@
         <img class="logo-img on-dark" src="/guidepost-logo.png" alt="Guidepost" width="208" height="30">
       </div>
       <p>Accessible product tours built on browser primitives. MIT licensed.</p>
+        <p>For agents: <a href="/llms.txt">llms.txt</a>, and this page registers
+          <a href="https://docs.guidepost.live/guides/agents/">WebMCP tools</a>.</p>
     </div>
     <div>
       <h3>Built on</h3>
@@ -541,7 +581,7 @@ const caps = [
   ['CSS anchor positioning', 'the tether', anchorOK],
   ['inert', 'focus containment', 'inert' in HTMLElement.prototype],
   ['@starting-style', 'enter and exit', CSS.supports('transition-behavior', 'allow-discrete')],
-  ['clip-path: path()', 'the spotlight', CSS.supports('clip-path', 'path("M0,0 H1 V1 Z")')],
+  ['clip-path: shape()', 'the spotlight', CSS.supports('clip-path', 'shape(from 0px 0px, arc to 1px 1px of 1px, close)')],
 ];
 
 const tick = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">' +
@@ -647,13 +687,13 @@ const MODES = { default: {}, js: { strategy: 'js' }, open: { blocking: false } }
 
 let mode = 'default';
 const tabs = [...document.querySelectorAll('.tab')];
-for (const tab of tabs) {
-  tab.addEventListener('click', () => {
-    mode = tab.dataset.mode;
-    for (const t of tabs) t.setAttribute('aria-selected', String(t === tab));
-    document.getElementById('tab-note').textContent = NOTES[mode];
-  });
+function setMode(next) {
+  if (!(next in MODES)) return;
+  mode = next;
+  for (const t of tabs) t.setAttribute('aria-selected', String(t.dataset.mode === next));
+  document.getElementById('tab-note').textContent = NOTES[mode];
 }
+for (const tab of tabs) tab.addEventListener('click', () => setMode(tab.dataset.mode));
 
 /* ---- the tour ---- */
 
@@ -712,10 +752,11 @@ const steps = [
 
 let active = null;
 
-function launch() {
+function launch(at) {
   active?.destroy();
   active = new Tour({ id: 'guidepost-demo', steps, ...MODES[mode] });
-  active.start();
+  // Click handlers pass an event; only a step id counts as a place to start.
+  return active.start(typeof at === 'string' ? at : 0);
 }
 
 document.getElementById('run').addEventListener('click', launch);
@@ -723,4 +764,134 @@ document.getElementById('run-top').addEventListener('click', launch);
 
 window.__launch = launch;
 window.__Tour = Tour;
+
+/* ---- WebMCP: the same tour, as tools an agent can call ----
+   Chrome 149+ behind an origin trial (the token goes in the <head>), or
+   chrome://flags/#enable-webmcp-testing locally. Where the API is missing
+   this registers nothing and costs nothing. */
+const STEP_IDS = steps.map((s) => s.id);
+const tourState = () => JSON.stringify({
+  active: Boolean(active?.isActive),
+  mode,
+  step: active?.isActive ? active.current?.id ?? null : null,
+  index: active?.isActive ? active.index : -1,
+  total: steps.length,
+  steps: steps.map((s) => ({ id: s.id, title: s.title })),
+});
+const NO_TOUR = 'No tour is running. Call start_tour first.';
+const noParams = { type: 'object', properties: {} };
+const stepParam = {
+  type: 'string',
+  enum: STEP_IDS,
+  description: 'A step id. In tour order: ' + STEP_IDS.join(', ') + '.',
+};
+
+const agentTools = [
+  {
+    name: 'start_tour',
+    description: 'Start the Guidepost product tour over the sample app on this page. Optionally pick a blocking mode first and a step to start at. Returns the tour state as JSON.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        mode: {
+          type: 'string',
+          enum: Object.keys(MODES),
+          description: 'default: the page goes inert but the spotlighted element stays clickable. js: the same, but forces the measured positioning fallback instead of CSS anchor positioning. open: non-blocking, nothing goes inert.',
+        },
+        step: stepParam,
+      },
+    },
+    execute: async ({ mode: next, step } = {}) => {
+      if (next) setMode(next);
+      await launch(step);
+      return tourState();
+    },
+  },
+  {
+    name: 'next_step',
+    description: 'Advance the running tour by one step. On the last step this completes and closes the tour. Returns the tour state as JSON.',
+    inputSchema: noParams,
+    execute: async () => {
+      if (!active?.isActive) return NO_TOUR;
+      await active.next();
+      return tourState();
+    },
+  },
+  {
+    name: 'previous_step',
+    description: 'Go back one step in the running tour. Returns the tour state as JSON.',
+    inputSchema: noParams,
+    execute: async () => {
+      if (!active?.isActive) return NO_TOUR;
+      await active.back();
+      return tourState();
+    },
+  },
+  {
+    name: 'go_to_step',
+    description: 'Jump the running tour to a step by id. Returns the tour state as JSON.',
+    inputSchema: { type: 'object', properties: { step: stepParam }, required: ['step'] },
+    execute: async ({ step }) => {
+      if (!active?.isActive) return NO_TOUR;
+      await active.goTo(step);
+      return tourState();
+    },
+  },
+  {
+    name: 'end_tour',
+    description: 'Dismiss the running tour and give the page back to the user. Returns the tour state as JSON.',
+    inputSchema: noParams,
+    execute: async () => {
+      if (!active?.isActive) return NO_TOUR;
+      await active.cancel();
+      return tourState();
+    },
+  },
+  {
+    name: 'get_tour_state',
+    description: 'Read whether a tour is running, its mode, the current step, and the list of step ids and titles. Changes nothing.',
+    inputSchema: noParams,
+    annotations: { readOnlyHint: true },
+    execute: async () => tourState(),
+  },
+  {
+    name: 'get_browser_support',
+    description: 'Report which of the browser features Guidepost is built on (Popover API, CSS anchor positioning, inert, @starting-style, clip-path: shape()) this browser supports, and whether the tour uses the native anchor tether or the measured fallback. Changes nothing.',
+    inputSchema: noParams,
+    annotations: { readOnlyHint: true },
+    execute: async () => JSON.stringify({
+      features: Object.fromEntries(caps.map(([name, role, ok]) => [name, { supported: ok, role }])),
+      positioning: anchorOK ? 'native anchor positioning' : 'measured fallback',
+    }),
+  },
+  {
+    name: 'get_library_info',
+    description: 'Return the package name, version, install command and documentation links for Guidepost, the library this page demonstrates. Changes nothing.',
+    inputSchema: noParams,
+    annotations: { readOnlyHint: true },
+    execute: async () => JSON.stringify({
+      name: '@cmunns/guidepost',
+      version,
+      install: 'npm install @cmunns/guidepost',
+      description: 'Accessible product tours built on native browser primitives: the Popover API, CSS anchor positioning, inert and a clip-path spotlight. 9.7 kB, zero dependencies, MIT.',
+      docs: 'https://docs.guidepost.live',
+      llms: ['https://guidepost.live/llms.txt', 'https://docs.guidepost.live/llms-full.txt'],
+      source: 'https://github.com/cmunns/guidepost',
+      license: 'MIT',
+    }),
+  },
+];
+
+// Exposed so the test suite can exercise the handlers directly.
+window.__agentTools = agentTools;
+
+const modelContext = document.modelContext ?? navigator.modelContext;
+if (modelContext?.registerTool) {
+  for (const tool of agentTools) {
+    Promise.resolve(modelContext.registerTool(tool)).catch((err) => {
+      console.warn('[guidepost demo] WebMCP registration failed for', tool.name, err);
+    });
+  }
+}
 </script>
+</html>

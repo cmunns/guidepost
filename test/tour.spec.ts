@@ -590,3 +590,66 @@ test('the ring does not fly in from the corner on the first targeted step', asyn
   // A corner-to-target sweep on this page is ~700px. A settle is well under 300.
   expect(travel).toBeLessThan(300);
 });
+
+// ---------------------------------------------------------------- agents
+
+const TOOL_NAMES = [
+  'end_tour',
+  'get_browser_support',
+  'get_library_info',
+  'go_to_step',
+  'next_step',
+  'previous_step',
+  'start_tour',
+  'get_tour_state',
+].sort();
+
+test('the agent tool handlers drive the tour', async ({ page }) => {
+  await page.goto('/');
+  const run = (name: string, input: object = {}) =>
+    page.evaluate(
+      ([n, i]) => (window as any).__agentTools.find((t: any) => t.name === n).execute(i),
+      [name, input] as const,
+    );
+
+  const names = await page.evaluate(() => (window as any).__agentTools.map((t: any) => t.name).sort());
+  expect(names).toEqual(TOOL_NAMES);
+
+  expect(JSON.parse(await run('start_tour', { mode: 'open', step: 'rail' }))).toMatchObject({
+    active: true,
+    mode: 'open',
+    step: 'rail',
+  });
+  await expect(page.locator('.gp-title')).toHaveText('Still clickable');
+  // Non-blocking mode was applied, so nothing went inert.
+  expect(await page.evaluate(() => document.querySelectorAll('[inert]').length)).toBe(0);
+
+  expect(JSON.parse(await run('next_step'))).toMatchObject({ step: 'tiles', index: 3 });
+  expect(JSON.parse(await run('go_to_step', { step: 'intro' }))).toMatchObject({ step: 'intro' });
+  expect(JSON.parse(await run('get_browser_support'))).toMatchObject({
+    features: { 'Popover API': { supported: true } },
+  });
+  expect(JSON.parse(await run('end_tour'))).toMatchObject({ active: false, step: null });
+  await expect(page.locator('.gp-card')).toBeHidden();
+  expect(await run('next_step')).toContain('No tour is running');
+});
+
+test('the tools are registered with the browser through WebMCP', async ({ page }) => {
+  await page.goto('/');
+  const hasApi = await page.evaluate(() => 'modelContext' in document);
+  test.skip(!hasApi, 'this Chromium has no WebMCP; the config passes --enable-features=WebMCP for one that does');
+
+  const registered = await page.evaluate(async () =>
+    (await (document as any).modelContext.getTools()).map((t: any) => t.name).sort(),
+  );
+  expect(registered).toEqual(TOOL_NAMES);
+
+  // Round-trip through the browser's own executor, not our handler directly.
+  const result = await page.evaluate(async () => {
+    const mc = (document as any).modelContext;
+    const tool = (await mc.getTools()).find((t: any) => t.name === 'start_tour');
+    return mc.executeTool(tool, JSON.stringify({ step: 'primitives' }));
+  });
+  expect(JSON.parse(result)).toMatchObject({ active: true, step: 'primitives' });
+  await expect(page.locator('.gp-card')).toBeVisible();
+});

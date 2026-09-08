@@ -1,0 +1,75 @@
+# Guidepost
+
+> Accessible product tours built on native browser primitives: the Popover API, CSS anchor positioning, `inert`, and an animated `clip-path` spotlight. 9.7 kB minified and gzipped with the stylesheet included, zero runtime dependencies, MIT licensed.
+
+Guidepost is a JavaScript library. This page (https://guidepost.live) is its live demo: a small sample app with a six-step tour running over it, plus a mode picker and a list of which browser features the current browser has.
+
+- npm package: `@cmunns/guidepost`
+- Install: `npm install @cmunns/guidepost`
+- Documentation: https://docs.guidepost.live
+- Documentation for LLMs: https://docs.guidepost.live/llms.txt (index) and https://docs.guidepost.live/llms-full.txt (every page in one file)
+- Source and issues: https://github.com/cmunns/guidepost
+
+## What it does
+
+- The tour card is a `popover`, so it lives in the top layer. No z-index, no portals, no `overflow: hidden` clipping.
+- The card is tethered to its target with CSS anchor positioning. Browsers without it get a measured JavaScript fallback with flip and shift.
+- The dim is one element with a rounded hole cut by `clip-path`. Clipping affects hit testing, so the spotlighted element stays clickable through the hole. The hole glides between steps as a CSS transition.
+- Focus containment is `inert`: everything except the card and the spotlighted target is marked inert, which also hides it from screen readers.
+- Enter and exit animations use `@starting-style` and `transition-behavior: allow-discrete`, so nothing is timed from JavaScript.
+
+## Minimal usage
+
+```js
+import { Tour } from '@cmunns/guidepost';
+
+const tour = new Tour({
+  id: 'onboarding',
+  steps: [
+    { title: 'Welcome', text: 'A quick tour.', placement: 'center' },
+    { target: '#sidebar', title: 'Navigation', text: 'Everything lives here.', placement: 'right-start' },
+    { target: '#search', title: 'Try it', text: 'Type to continue.', focus: 'target',
+      advanceOn: { event: 'input', when: (e) => e.target.value.length > 2 } },
+  ],
+});
+
+tour.start();
+```
+
+Controller methods: `start(at?)`, `next()`, `back()`, `goTo(indexOrId)`, `complete()`, `cancel()`, `refresh()`, `destroy()`. Static helpers: `Tour.hasCompleted(id)`, `Tour.clearCompleted(id)`.
+
+## Agents: this page exposes WebMCP tools
+
+The demo registers tools with the browser's WebMCP API (`document.modelContext`, Chrome 149+ via origin trial or `chrome://flags/#enable-webmcp-testing`). An agent in a supporting browser can drive the tour without clicking:
+
+- `start_tour` — start the tour, optionally choosing a mode (`default`, `js`, `open`) and a starting step id
+- `next_step`, `previous_step`, `go_to_step` — move through the steps
+- `end_tour` — dismiss the tour
+- `get_tour_state` — read-only: whether a tour is running, the current step, the mode, and the list of steps
+- `get_browser_support` — read-only: which of the underlying browser features this browser has
+- `get_library_info` — read-only: package name, version, install command, and documentation links
+
+Step ids on this page, in order: `intro`, `primitives`, `rail`, `tiles`, `search`, `done`.
+
+## Browser support
+
+Required with no fallback: Popover API, `inert`, `clip-path: path()` (floor: roughly Chrome 117, Safari 17.5, Firefox 129). `clip-path: shape()` is used where available (Chrome 137+, Safari 18.4+, Firefox 141+). CSS anchor positioning (Chrome 125+, Safari 26+, Firefox 147+) has a measured fallback.
+
+## Docs pages
+
+- Introduction: https://docs.guidepost.live/
+- Install: https://docs.guidepost.live/install/
+- Quick start: https://docs.guidepost.live/quick-start/
+- Placement: https://docs.guidepost.live/guides/placement/
+- Blocking modes: https://docs.guidepost.live/guides/blocking-modes/
+- Async steps: https://docs.guidepost.live/guides/async-steps/
+- Buttons and labels: https://docs.guidepost.live/guides/buttons-and-labels/
+- Styling: https://docs.guidepost.live/guides/styling/
+- Accessibility: https://docs.guidepost.live/guides/accessibility/
+- Recipes: https://docs.guidepost.live/guides/recipes/
+- Agents and WebMCP: https://docs.guidepost.live/guides/agents/
+- Troubleshooting: https://docs.guidepost.live/guides/troubleshooting/
+- Steps reference: https://docs.guidepost.live/reference/steps/
+- Options reference: https://docs.guidepost.live/reference/options/
+- Methods reference: https://docs.guidepost.live/reference/methods/
+- Browser support: https://docs.guidepost.live/reference/browser-support/

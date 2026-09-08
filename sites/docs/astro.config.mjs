@@ -43,6 +43,7 @@ export default defineConfig({
             { label: 'Styling', slug: 'guides/styling' },
             { label: 'Accessibility', slug: 'guides/accessibility' },
             { label: 'Recipes', slug: 'guides/recipes' },
+            { label: 'Agents and WebMCP', slug: 'guides/agents' },
             { label: 'Troubleshooting', slug: 'guides/troubleshooting' },
           ],
         },
