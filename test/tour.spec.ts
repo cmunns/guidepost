@@ -540,3 +540,37 @@ test('reduced motion collapses every duration', async ({ page }) => {
     expect(value.split(',').every((d) => parseFloat(d) <= 0.001)).toBe(true);
   }
 });
+
+test('the ring does not fly in from the corner on the first targeted step', async ({ page }) => {
+  // A centred step has no hole, so the ring is hidden. Its left/top are
+  // transitioned, so if they are left unset it starts at 0,0 and the next
+  // targeted step animates it diagonally across the viewport while it fades up.
+  await open(page);
+  await exposeTour(page);
+  await page.click('#run-top');
+  await expect(page.locator('.gp-card')).toBeVisible();
+  await page.waitForTimeout(450);
+
+  const travel = await page.evaluate(async () => {
+    const ring = document.querySelector('.gp-ring') as HTMLElement;
+    const seen: { op: number; x: number; y: number }[] = [];
+    const t0 = performance.now();
+    const tick = () => {
+      const box = ring.getBoundingClientRect();
+      seen.push({ op: +getComputedStyle(ring).opacity, x: box.x, y: box.y });
+      if (performance.now() - t0 < 1400) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    await new Promise((r) => setTimeout(r, 1500));
+
+    const visible = seen.filter((s) => s.op > 0.05);
+    if (visible.length < 2) return 0;
+    const a = visible[0]!;
+    const b = visible[visible.length - 1]!;
+    return Math.hypot(b.x - a.x, b.y - a.y);
+  });
+
+  // A corner-to-target sweep on this page is ~700px. A settle is well under 300.
+  expect(travel).toBeLessThan(300);
+});

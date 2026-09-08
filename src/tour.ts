@@ -649,6 +649,17 @@ export class Tour implements TourController {
         borderRadius: `${hole.radius}px`,
       });
     } else {
+      // Park the ring on the card's own centre while it is invisible. Its
+      // left/top are transitioned, so leaving them unset means the next
+      // targeted step animates the ring in from the viewport corner: it fades
+      // up mid-flight and reads as a box flying across the screen.
+      const rest = this.#card.getBoundingClientRect();
+      Object.assign(this.#ring.style, {
+        left: `${Math.round(rest.left + rest.width / 2)}px`,
+        top: `${Math.round(rest.top + rest.height / 2)}px`,
+        width: '0px',
+        height: '0px',
+      });
       this.#ring.dataset.empty = 'true';
     }
 
