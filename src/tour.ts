@@ -18,7 +18,13 @@ import {
   resolveSide,
   supportsAnchorPositioning,
 } from './position.js';
-import { cutoutPath, padRect, type SpotlightRect } from './spotlight.js';
+import {
+  cutoutPath,
+  padRect,
+  preferredCutoutFormat,
+  type CutoutFormat,
+  type SpotlightRect,
+} from './spotlight.js';
 import { injectStyles } from './styles.js';
 import type {
   Placement,
@@ -82,6 +88,7 @@ export class Tour implements TourController {
   #abort: AbortController | null = null;
   #updater = throttleFrame(() => this.#update());
   #useAnchor = false;
+  #cutoutFormat: CutoutFormat = 'path';
 
   constructor(options: TourOptions) {
     this.#opts = options;
@@ -129,6 +136,7 @@ export class Tour implements TourController {
 
     if (this.#opts.injectStyles !== false) injectStyles();
     this.#mount();
+    this.#cutoutFormat = preferredCutoutFormat();
 
     this.#active = true;
     this.#previousFocus =
@@ -630,7 +638,7 @@ export class Tour implements TourController {
       hole = padRect(rect, padding, radius, vw, vh);
     }
 
-    this.#scrim.style.clipPath = cutoutPath(vw, vh, hole);
+    this.#scrim.style.clipPath = cutoutPath(vw, vh, hole, this.#cutoutFormat);
     // Non-blocking tours never intercept a click; blocking + interactive tours
     // let the scrim swallow everything except the cutout; blocking + modal
     // tours hand that job to the invisible blocker so the cutout stays visible

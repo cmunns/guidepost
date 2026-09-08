@@ -1,6 +1,6 @@
 export { Tour, startTour } from './tour.js';
 export { CSS as guidepostCSS, STYLE_ID, injectStyles } from './styles.js';
-export { cutoutPath, padRect } from './spotlight.js';
+export { cutoutPath, padRect, preferredCutoutFormat, supportsShapeFunction } from './spotlight.js';
 export { InertManager } from './inert.js';
 export {
   supportsAnchorPositioning,
@@ -22,4 +22,4 @@ export type {
   TourOptions,
   TourStep,
 } from './types.js';
-export type { SpotlightRect } from './spotlight.js';
+export type { CutoutFormat, SpotlightRect } from './spotlight.js';

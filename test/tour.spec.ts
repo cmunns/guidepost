@@ -182,16 +182,32 @@ test('the spotlight path is well-formed and moves between steps', async ({ page 
   const clip = () => page.locator('.gp-scrim').evaluate((el) => getComputedStyle(el).clipPath);
 
   const first = await clip();
-  expect(first).toContain('path(');
+  // shape() where the browser has it (see spotlight.ts for why), path() elsewhere.
+  expect(first).toMatch(/^(shape|path)\(/);
 
   await page.click('.gp-btn[data-variant="primary"]');
   await page.waitForTimeout(700);
   const second = await clip();
   expect(second).not.toBe(first);
 
-  // Both paths must share a command sequence or the transition cannot interpolate.
-  const commands = (p: string) => (p.match(/[MHVAZ]/g) ?? []).join('');
+  // Both shapes must share a command sequence or the transition cannot interpolate.
+  const commands = (p: string) =>
+    p.startsWith('shape(')
+      ? (p.match(/\b(from|move|hline|vline|arc|close)\b/g) ?? []).join(' ')
+      : (p.match(/[MHVAZ]/g) ?? []).join('');
   expect(commands(second)).toBe(commands(first));
+});
+
+test('browsers with shape() get shape(), which keeps Chromium off its compositor', async ({ page }) => {
+  await startTour(page);
+  const state = await page.evaluate(() => ({
+    supported: CSS.supports('clip-path', 'shape(from 0px 0px, arc to 1px 1px of 1px, close)'),
+    clip: getComputedStyle(document.querySelector('.gp-scrim')!).clipPath,
+  }));
+  // Chromium's composited clip-path transition paints a mis-sized mask; it
+  // declines to composite a shape() with arcs, so that is what it must get.
+  expect(state.clip.startsWith(state.supported ? 'shape(' : 'path(')).toBe(true);
+  expect(state.clip).toContain(state.supported ? 'arc to' : 'A');
 });
 
 test('the card is tethered to its target and the arrow agrees', async ({ page }) => {

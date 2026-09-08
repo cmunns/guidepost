@@ -3,7 +3,7 @@
 Accessible product tours built on stuff your browser already has. No positioning
 library. No portals. No z-index war. No hand-rolled focus trap.
 
-**MIT licensed.** 9.4 kB minified + gzipped with the stylesheet included, and
+**MIT licensed.** 9.7 kB minified + gzipped with the stylesheet included, and
 zero runtime dependencies.
 
 [**Live demo**](https://guidepost.live) · [**Documentation**](https://docs.guidepost.live)
@@ -60,7 +60,7 @@ minified and gzipped, with any stylesheet it ships included.
 | --- | --- | --- | --- | --- | --- | --- |
 | @reactour/tour 3.8 | 6.5 kB | 3 | MIT | – | – | – |
 | driver.js 1.8 | 7.9 kB | 0 | MIT | – | – | – |
-| **guidepost 0.1.4** | **9.4 kB** | **0** | **MIT** | **yes** | **yes** | **yes** |
+| **guidepost 0.1.4** | **9.7 kB** | **0** | **MIT** | **yes** | **yes** | **yes** |
 | shepherd.js 15.3 | 16.2 kB | 2 | AGPL-3.0 | – | – | – |
 | tourguidejs 1.1 | 17.6 kB | 0 | BSD-3 | – | – | – |
 | intro.js 8.5 | 19.3 kB | 0 | AGPL-3.0 | – | – | – |
@@ -90,9 +90,17 @@ hole. Two things fall out of that:
 - Clipping affects hit testing, so the hole passes clicks through to the real
   element underneath. That's what makes an *interactive* tour work at all, since
   users can actually do the thing the step is describing.
-- Every path this library emits uses an identical command sequence, including
+- Every shape this library emits uses an identical command sequence, including
   the targetless case (a zero-size hole), so `clip-path` interpolates and the
   spotlight glides between steps as a plain CSS transition.
+
+The shape is written as `clip-path: shape()` where the browser has it and
+`path()` elsewhere. Same geometry either way, but the `shape()` form matters in
+Chromium: it runs `clip-path` transitions on the compositor through a paint
+worklet that sizes its mask wrong, so the dim covers only part of the viewport
+until the transition ends. Chromium won't composite a `shape()` with arc
+commands, which keeps the transition on the main thread where it paints
+correctly.
 
 **`inert` is the focus trap.** Rather than intercepting Tab, the tour marks
 every element inert *except* the ancestor path to the card and, in interactive
@@ -137,6 +145,7 @@ separately.
 | Popover API | 114+ | 17+ | 125+ | none, required |
 | `inert` | 102+ | 15.5+ | 112+ | none, required |
 | `clip-path: path()` | 88+ | 13.1+ | 97+ | none, required |
+| `clip-path: shape()` | 137+ | 18.4+ | 141+ | `path()`, which Chromium mis-paints mid-transition |
 | `@starting-style` | 117+ | 17.5+ | 129+ | animation degrades, layout unaffected |
 | CSS anchor positioning | 125+ | 26+ | 147+ | **measured JS positioning** |
 
