@@ -81,6 +81,21 @@ document.getElementById('go').addEventListener('click', async () => {
   await new Promise(r => setTimeout(r, 1000));
 
   const scrim = w.document.querySelector('.gp-scrim');
+
+  // Record whether the clip-path transition actually runs, or snaps.
+  const events = [];
+  const t0 = performance.now();
+  for (const kind of ['transitionstart', 'transitionend', 'transitioncancel'])
+    scrim.addEventListener(kind, e => events.push(`${kind} ${e.propertyName} +${Math.round(performance.now()-t0)}ms`));
+
+  // Use the browser's own geometry engine to ask, per frame, whether each
+  // viewport corner really falls inside the dimmed region.
+  const svg = w.document.createElementNS('http://www.w3.org/2000/svg','svg');
+  const gpath = w.document.createElementNS('http://www.w3.org/2000/svg','path');
+  svg.appendChild(gpath);
+  svg.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+  w.document.body.appendChild(svg);
+
   const frames = [];
   let n = 0;
 
@@ -107,7 +122,17 @@ document.getElementById('go').addEventListener('click', async () => {
       paint = { maxLeftRightDiff: Math.max(...diffs), diffs };
     }
 
-    frames.push({ n, layoutOK, opacity: +cs.opacity, scrollY: Math.round(w.scrollY),
+    // Geometry truth: are all four viewport corners inside the dim?
+    let corners = 'n/a';
+    const cp = cs.clipPath;
+    if (cp && cp !== 'none' && cp.startsWith('path')) {
+      gpath.setAttribute('d', cp.replace(/^path\(["']?/, '').replace(/["']?\)$/, ''));
+      const hit = (x, y) => gpath.isPointInFill(new DOMPoint(x, y));
+      corners = [[3,3],[w.innerWidth-3,3],[3,w.innerHeight-3],[w.innerWidth-3,w.innerHeight-3]]
+        .map(([x,y]) => hit(x,y) ? 'D' : '.').join('');
+    }
+
+    frames.push({ n, layoutOK, corners, opacity: +cs.opacity, scrollY: Math.round(w.scrollY),
                   box: `${Math.round(r.width)}x${Math.round(r.height)}@${Math.round(r.x)},${Math.round(r.y)}`,
                   paint });
     if (++n < 110) w.requestAnimationFrame(grab);
@@ -121,15 +146,25 @@ document.getElementById('go').addEventListener('click', async () => {
   try { w.close(); } catch {}
 
   const layoutBad = frames.filter(f => f.opacity > 0.5 && !f.layoutOK);
+  const clipBad   = frames.filter(f => f.opacity > 0.5 && f.corners !== 'DDDD' && f.corners !== 'n/a');
   const paintBad  = frames.filter(f => f.paint && f.paint.maxLeftRightDiff > 55);
 
   out.textContent = '';
   log(`device pixel ratio : ${window.devicePixelRatio}`);
   log(`frames sampled     : ${frames.length}`);
   log(`layout failures    : ${layoutBad.length}`);
+  log(`clip-path failures : ${clipBad.length}   (a viewport corner fell outside the dim)`);
   log(`PAINT failures     : ${paintBad.length}   (left/right mismatch on a presented frame)`);
   log('');
-  if (paintBad.length) {
+  log('transition events  :');
+  for (const e of events) log('   ' + e);
+  log('');
+  if (clipBad.length) {
+    log('CLIP-PATH FAILURES — the dim genuinely did not cover the viewport:');
+    for (const f of clipBad.slice(0, 10))
+      log(`  frame ${f.n}  corners=${f.corners}  box=${f.box}  scrollY=${f.scrollY}`);
+    log('  (corner order: top-left, top-right, bottom-left, bottom-right; D = dimmed)');
+  } else if (paintBad.length) {
     log('PAINT FAILURES — this is the bug, and it is a compositing issue:');
     for (const f of paintBad.slice(0, 10))
       log(`  frame ${f.n}  scrollY=${f.scrollY}  box=${f.box}  L/R diff=${f.paint.maxLeftRightDiff}  rows=${JSON.stringify(f.paint.diffs)}`);
