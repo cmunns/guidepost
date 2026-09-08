@@ -1,0 +1,102 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guidepost scrim check</title>
+<style>
+  body { margin: 0; font: 15px/1.5 system-ui, sans-serif; background: #f2f0eb; color: #1c1a19; }
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  h1 { font-size: 1.5rem; margin: 0 0 .5rem; }
+  p { color: #55504c; }
+  button { font: inherit; padding: .6rem 1.1rem; border-radius: 8px; border: 1px solid #c9c3bd;
+           background: #fff; cursor: pointer; }
+  button.go { background: #3d1f24; color: #fff; border-color: #3d1f24; }
+  pre { background: #fff; border: 1px solid #e2ddd7; border-radius: 10px; padding: 1rem;
+        overflow: auto; font-size: 12.5px; max-height: 22rem; }
+  .row { display: flex; gap: .6rem; margin: 1.25rem 0; flex-wrap: wrap; }
+  .ok { color: #1c6b3f; font-weight: 600; }
+  .bad { color: #a8352b; font-weight: 600; }
+</style>
+
+<div class="wrap">
+  <h1>Scrim check</h1>
+  <p>
+    Runs the tour and samples the real painted page, in this browser, on every
+    animation frame across the first step change. That is the transition from the
+    centered step to the first anchored one.
+  </p>
+
+  <div class="row">
+    <button class="go" id="go">Run the check</button>
+    <button id="copy" hidden>Copy result</button>
+  </div>
+
+  <pre id="out">Press "Run the check". It takes about 4 seconds.</pre>
+</div>
+
+<script type="module">
+const out = document.getElementById('out');
+const log = (s) => { out.textContent += '\n' + s; };
+
+document.getElementById('go').addEventListener('click', async () => {
+  out.textContent = 'Opening the demo in a popup and sampling it...';
+  const w = window.open('/', 'gp-check', 'width=1200,height=850');
+  if (!w) { out.textContent = 'Popup blocked. Allow popups for this page and retry.'; return; }
+
+  await new Promise(r => w.addEventListener('load', r, { once: true }));
+  await new Promise(r => setTimeout(r, 900));
+
+  const d = w.document;
+  const start = d.getElementById('run-top') || d.getElementById('run');
+  if (!start) { out.textContent = 'Could not find the tour button on the demo page.'; return; }
+
+  start.click();
+  await new Promise(r => setTimeout(r, 900));
+
+  const scrim = d.querySelector('.gp-scrim');
+  if (!scrim) { out.textContent = 'No scrim element found.'; return; }
+
+  const frames = [];
+  let n = 0;
+  const sample = () => {
+    const r = scrim.getBoundingClientRect();
+    const cs = w.getComputedStyle(scrim);
+    frames.push({
+      n,
+      dpr: w.devicePixelRatio,
+      vp: `${w.innerWidth}x${w.innerHeight}`,
+      box: `${Math.round(r.width)}x${Math.round(r.height)}@${Math.round(r.x)},${Math.round(r.y)}`,
+      opacity: +cs.opacity,
+      covers: r.top <= 1 && r.left <= 1 && r.bottom >= w.innerHeight - 1 && r.right >= w.innerWidth - 1,
+      scrollY: Math.round(w.scrollY),
+    });
+    if (++n < 120) w.requestAnimationFrame(sample);
+  };
+  w.requestAnimationFrame(sample);
+
+  // Drive the centered -> anchored step change.
+  w.document.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+  await new Promise(r => setTimeout(r, 2600));
+
+  const bad = frames.filter(f => f.opacity > 0.5 && !f.covers);
+  out.textContent = '';
+  log(`device pixel ratio : ${frames[0]?.dpr}`);
+  log(`viewport           : ${frames[0]?.vp}`);
+  log(`frames sampled     : ${frames.length}`);
+  log(`frames where the scrim did NOT cover the viewport: ${bad.length}`);
+  log('');
+  if (bad.length) {
+    log('BAD FRAMES (this is the bug):');
+    for (const f of bad.slice(0, 12)) log('  ' + JSON.stringify(f));
+  } else {
+    log('No geometry problem detected in this browser.');
+    log('If you still SAW a partial backdrop, it is a paint/compositing');
+    log('artifact rather than a layout one. Note what you saw and when.');
+  }
+  document.getElementById('copy').hidden = false;
+  w.close();
+});
+
+document.getElementById('copy').addEventListener('click', () => {
+  navigator.clipboard.writeText(out.textContent);
+});
+</script>
